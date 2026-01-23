@@ -7,7 +7,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
 import pandas as pd
 import soundfile as sf
 console = Console()
-from core.all_whisper_methods.demucs_vl import demucs_main
+from core.all_whisper_methods.roformer_vl import roformer_main
 import streamlit as st
 
 
@@ -32,7 +32,7 @@ def extract_refer_audio_main():
     SEG_DIR = os.path.join("users", username, "output", "audio", "segs")
     TASKS_FILE = os.path.join("users", username, "output", "audio", "tts_tasks.xlsx")
 
-    demucs_main() #!!! in case demucs is not run
+    roformer_main() #!!! in case roformer is not run
     if os.path.exists(os.path.join(SEG_DIR, '1.wav')):
         rprint(Panel("Audio segments already exist, skipping extraction", title="Info", border_style="blue"))
         return

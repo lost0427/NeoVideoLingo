@@ -32,7 +32,7 @@ def convert_video_to_audio(video_file: str):
             'ffmpeg', '-y', '-i', video_file, '-vn',
             '-c:a', 'libmp3lame', '-b:a', '128k',
             '-ar', '32000',
-            '-ac', '1', 
+            '-ac', '2', 
             '-metadata', 'encoding=UTF-8', RAW_AUDIO_FILE
         ], check=True, stderr=subprocess.PIPE)
         print(f"🎬➡️🎵 Converted <{video_file}> to <{RAW_AUDIO_FILE}> with FFmpeg\n")

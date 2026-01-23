@@ -5,7 +5,7 @@ from rich import print as rprint
 import subprocess
 
 from core.config_utils import load_key
-from core.all_whisper_methods.demucs_vl import demucs_main
+from core.all_whisper_methods.roformer_vl import roformer_main
 from core.all_whisper_methods.audio_preprocess import process_transcription, convert_video_to_audio, split_audio, save_results, compress_audio
 from core.step1_ytdlp import find_video_files
 
@@ -20,7 +20,7 @@ def enhance_vocals(vocals_ratio=2.50):
     VOCAL_AUDIO_FILE = os.path.join(AUDIO_DIR, "vocal.mp3")
 
     """Enhance vocals audio volume"""
-    if not load_key("demucs",username=username):
+    if not load_key("roformer",username=username):
         return RAW_AUDIO_FILE
         
     try:
@@ -52,12 +52,12 @@ def transcribe():
     video_file = find_video_files(username=username)
     convert_video_to_audio(video_file)
 
-    # step1 Demucs vocal separation:
-    if load_key("demucs", username=username):
-        demucs_main()
+    # step1 roformer vocal separation:
+    if load_key("roformer", username=username):
+        roformer_main()
     
     # step2 Compress audio
-    choose_audio = enhance_vocals() if load_key("demucs", username=username) else RAW_AUDIO_FILE
+    choose_audio = enhance_vocals() if load_key("roformer", username=username) else RAW_AUDIO_FILE
     
     base_path = os.path.join("users", username, "output", "audio")
     WHISPER_FILE = os.path.join(base_path, "for_whisper.mp3")

@@ -11,7 +11,7 @@ def get_spacy_model(language: str):
     username = st.session_state.get('username')
     SPACY_MODEL_MAP = load_key("spacy_model_map", username=username)
     
-    model = SPACY_MODEL_MAP.get(language.lower(), "en_core_web_md")
+    model = SPACY_MODEL_MAP.get(language.lower(), "en_core_web_sm")
     if language not in SPACY_MODEL_MAP:
         print(f"[yellow]Spacy model does not support '{language}', using en_core_web_md model as fallback...[/yellow]")
     return model

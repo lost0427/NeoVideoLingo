@@ -15,9 +15,17 @@ import threading
 from core.config_utils import load_key
 from core.all_whisper_methods.audio_preprocess import save_language
 import streamlit as st
+from omegaconf.listconfig import ListConfig
 
 MODEL_DIR = load_key("model_dir")
 transcription_lock = threading.Lock()
+original_load = torch.load
+def trusted_load(*args, **kwargs):
+    kwargs['weights_only'] = False
+    return original_load(*args, **kwargs)
+
+torch.load = trusted_load
+
 
 def check_hf_mirror() -> str:
     """Check and return the fastest HF mirror"""
@@ -88,7 +96,7 @@ def transcribe_audio(audio_file: str, start: float, end: float) -> Dict:
             }
             asr_options = {"temperatures": [0],"initial_prompt": "",}
             whisper_language = None if 'auto' in WHISPER_LANGUAGE else WHISPER_LANGUAGE
-            rprint("[bold yellow]**You can ignore warning of `Model was trained with torch 1.10.0+cu102, yours is 2.0.0+cu118...`**[/bold yellow]")
+            rprint("[bold yellow]**You can ignore warning of `Model was trained with torch 1.10.0+cu102, yours is 2.8.0+cu118...`**[/bold yellow]")
             model = whisperx.load_model(model_name, device, compute_type=compute_type, language=whisper_language, vad_options=vad_options, asr_options=asr_options, download_root=MODEL_DIR)
 
             # Create temp file with wav format for better compatibility

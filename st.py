@@ -47,7 +47,7 @@ def text_processing_section():
             return True
 
 def process_text():
-    with st.spinner(t("Using Whisper for transcription...")):
+    with st.spinner(t("Audio separation & transcription...")):
         step2_whisperX.transcribe()
     with st.spinner(t("Splitting long sentences...")):  
         step3_1_spacy_split.split_by_spacy()
