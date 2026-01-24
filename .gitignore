@@ -176,3 +176,4 @@ installer_files/
 users/
 .vscode/
 auth.yaml
+translations/config.ini
