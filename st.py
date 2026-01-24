@@ -138,7 +138,7 @@ def main():
 
         logo_col, _ = st.columns([1,1])
         with logo_col:
-            st.image("docs/logo.webp", use_column_width=True)
+            st.image("docs/logo.webp", use_container_width=True)
         st.markdown(button_style, unsafe_allow_html=True)
         welcome_text = t("Hello, welcome to VideoLingo. If you encounter any issues, feel free to get instant answers with our Free QA Agent <a href=\"https://share.fastgpt.in/chat/share?shareId=066w11n3r9aq6879r4z0v9rh\" target=\"_blank\">here</a>! You can also try out our SaaS website at <a href=\"https://videolingo.io\" target=\"_blank\">videolingo.io</a> for free!")
         st.markdown(f"<p style='font-size: 20px;'>{welcome_text}</p>", unsafe_allow_html=True)
