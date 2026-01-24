@@ -63,7 +63,7 @@ give_star_button = """
         display: block;
         width: 100%;
         padding: 0.5em 1em;
-        color: #144070;
+        color: currentColor;
         background-color: #d0e0f2;
         border-radius: 6px;
         text-decoration: none;
@@ -74,7 +74,7 @@ give_star_button = """
     }
     .github-button:hover {
         background-color: #ffffff;
-        color: #144070;
+        color: currentColor;
     }
 </style>
 <a href="https://github.com/Huanshere/VideoLingo" target="_blank" style="text-decoration: none;">
@@ -89,7 +89,7 @@ button_style = """
 div.stButton > button:first-child {
     display: block;
     padding: 0.5em 1em;
-    color: #144070;
+    color: currentColor;
     background-color: transparent;
     text-decoration: none;
     font-weight: bold;
@@ -101,25 +101,25 @@ div.stButton > button:first-child {
 }
 div.stButton > button:hover {
     background-color: transparent;
-    color: #144070;
-    border-color: #144070;
+    color: currentColor;
+    border-color: currentColor;
 }
 div.stButton > button:active, div.stButton > button:focus {
     background-color: transparent !important;
-    color: #144070 !important;
-    border-color: #144070 !important;
+    color: currentColor !important;
+    border-color: currentColor !important;
     box-shadow: none !important;
 }
 div.stButton > button:active:hover, div.stButton > button:focus:hover {
     background-color: transparent !important;
-    color: #144070 !important;
-    border-color: #144070 !important;
+    color: currentColor !important;
+    border-color: currentColor !important;
     box-shadow: none !important;
 }
 div.stDownloadButton > button:first-child {
     display: block;
     padding: 0.5em 1em;
-    color: #144070;
+    color: currentColor;
     background-color: transparent;
     text-decoration: none;
     font-weight: bold;
@@ -131,19 +131,19 @@ div.stDownloadButton > button:first-child {
 }
 div.stDownloadButton > button:hover {
     background-color: transparent;
-    color: #144070;
-    border-color: #144070;
+    color: currentColor;
+    border-color: currentColor;
 }
 div.stDownloadButton > button:active, div.stDownloadButton > button:focus {
     background-color: transparent !important;
-    color: #144070 !important;
-    border-color: #144070 !important;
+    color: currentColor !important;
+    border-color: currentColor !important;
     box-shadow: none !important;
 }
 div.stDownloadButton > button:active:hover, div.stDownloadButton > button:focus:hover {
     background-color: transparent !important;
-    color: #144070 !important;
-    border-color: #144070 !important;
+    color: currentColor !important;
+    border-color: currentColor !important;
     box-shadow: none !important;
 }
 </style>
