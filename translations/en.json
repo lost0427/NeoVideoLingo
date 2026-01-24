@@ -114,5 +114,8 @@
     "WhisperX vad_onset": "WhisperX vad_onset",
     "Voice Activity Detection start threshold - Range: 0-1, higher more strict, lower more sensitive": "Voice Activity Detection start threshold - Range: 0-1, higher more strict, lower more sensitive",
     "WhisperX vad_offset": "WhisperX vad_offset",
-    "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier": "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier"
+    "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier": "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier",
+    "🔄 Fetch Available Models": "🔄 Fetch Available Models",
+    "Found {count} models": "Found {count} models",
+    "📋 Available Models": "📋 Available Models"
 }

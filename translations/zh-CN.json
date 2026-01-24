@@ -114,6 +114,8 @@
     "WhisperX vad_onset": "WhisperX vad_onset",
     "Voice Activity Detection start threshold - Range: 0-1, higher more strict, lower more sensitive": "语音活动检测起始阈值 - 范围: 0-1，数值越高越严格，数值越低越灵敏",
     "WhisperX vad_offset": "WhisperX vad_offset",
-    "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier": "语音活动检测结束阈值 - 范围: 0-1，数值越低可检测到弱信号，数值越高则更早结束"
+    "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier": "语音活动检测结束阈值 - 范围: 0-1，数值越低可检测到弱信号，数值越高则更早结束",
+    "🔄 Fetch Available Models": "🔄 获取可用模型",
+    "Found {count} models": "找到 {count} 个模型",
+    "📋 Available Models": "📋 可用模型"
 }
-

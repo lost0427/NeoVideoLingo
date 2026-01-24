@@ -49,6 +49,24 @@ def page_setting():
             if st.button("📡", key="api"):
                 st.toast(t("API Key is valid") if check_api() else t("API Key is invalid"), 
                         icon="✅" if check_api() else "❌")
+        
+        # Add model list fetching functionality
+        if st.button(t("🔄 Fetch Available Models"), key="fetch_models"):
+            try:
+                available_models = fetch_available_models()
+                if available_models:
+                    st.session_state.available_models = available_models
+                    count = len(available_models)
+                    st.success(t("Found {count} models").format(count=count))
+
+                    with st.expander(t("📋 Available Models"), expanded=False):
+                        model_list_text = "\n".join([f"- {model}" for model in available_models])
+                        st.markdown(model_list_text)
+
+                else:
+                    st.warning("No models found")
+            except Exception as e:
+                st.error(f"Error fetching models: {str(e)}")
     
     with st.expander(t("Subtitles Settings"), expanded=True):
         c1, c2 = st.columns(2)
@@ -177,3 +195,45 @@ def check_api():
         return resp.get('message') == 'success'
     except Exception:
         return False
+
+def fetch_available_models():
+    """Fetch available models from the API endpoint"""
+    import requests
+    import json
+    username = st.session_state.get('username')
+    base_url = load_key("api.base_url",username=username)
+    api_key = load_key("api.key",username=username)
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    if base_url.endswith("/v1"):
+        models_url = base_url.replace("/v1", "/v1/models")
+    else:
+        models_url = f"{base_url.rstrip('/')}/v1/models" if base_url else ""
+    
+    if not models_url:
+        raise ValueError("Invalid base URL configuration")
+    
+    response = requests.get(models_url, headers=headers)
+    response.raise_for_status()
+    data = response.json()
+    
+    # Extract model names from the response (typically in a 'data' field with 'id' for each model)
+    models = []
+    if 'data' in data:
+        for model in data['data']:
+            if 'id' in model:
+                models.append(model['id'])
+    else:
+        # Fallback: if there's no 'data' field, try to extract model names differently
+        # This handles cases where the API might return models in a different format
+        for key, value in data.items():
+            if isinstance(value, list):
+                for item in value:
+                    if isinstance(item, dict) and 'id' in item:
+                        models.append(item['id'])
+    
+    return sorted(models)  # Return sorted list of model names

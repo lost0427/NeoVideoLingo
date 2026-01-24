@@ -114,5 +114,8 @@
     "WhisperX vad_onset": "WhisperX vad_onset",
     "Voice Activity Detection start threshold - Range: 0-1, higher more strict, lower more sensitive": "音声活動検出の開始しきい値 - 範囲: 0〜1、値が高いほど厳格、低いほど感度が高い",
     "WhisperX vad_offset": "WhisperX vad_offset",
-    "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier": "音声活動検出の終了しきい値 - 範囲: 0〜1、値が低いほど弱い信号を検出、高いほど早く終了"
+    "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier": "音声活動検出の終了しきい値 - 範囲: 0〜1、値が低いほど弱い信号を検出、高いほど早く終了",
+    "🔄 Fetch Available Models": "🔄 利用可能なモデルを取得",
+    "Found {count} models": "{count} 個のモデルが見つかりました",
+    "📋 利用可能なモデル": "📋 利用可能なモデル"
 }
