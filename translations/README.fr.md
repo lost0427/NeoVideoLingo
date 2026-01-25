@@ -1,28 +1,79 @@
 <div align="center">
 
-<img src="/docs/logo.png" alt="VideoLingo Logo" height="140">
+<img src="/docs/logo.png" alt="Logo VideoLingo" height="140">
 
-# Connecter le Monde, Image par Image
+# Connecter chaque frame du monde
 
 <a href="https://trendshift.io/repositories/12200" target="_blank"><img src="https://trendshift.io/api/badge/repositories/12200" alt="Huanshere%2FVideoLingo | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
-[**English**](/README.md)｜[**简体中文**](/translations/README.zh.md)｜[**繁體中文**](/translations/README.zh-TW.md)｜[**日本語**](/translations/README.ja.md)｜[**Español**](/translations/README.es.md)｜[**Русский**](/translations/README.ru.md)｜[**Français**](/translations/README.fr.md)
+[**English**](/translations/README.en.md)｜[**简体中文**](/README.md)｜[**繁體中文**](/translations/README.zh-TW.md)｜[**日本語**](/translations/README.ja.md)｜[**Español**](/translations/README.es.md)｜[**Русский**](/translations/README.ru.md)｜[**Français**](/translations/README.fr.md)
 
 </div>
 
-Version de développement secondaire basée sur [Huanshere/VideoLingo](https://github.com/Huanshere/VideoLingo).  
-Pour les fonctionnalités complètes et la documentation de la version d'origine, veuillez consulter le [dépôt original](https://github.com/Huanshere/VideoLingo).
+Version basée sur le développement secondaire de [Huanshere/VideoLingo](https://github.com/Huanshere/VideoLingo).  
+Pour les fonctionnalités et la documentation complètes de la version originale, veuillez consulter [le dépôt original](https://github.com/Huanshere/VideoLingo).
 
-## Améliorations
-- 👥 Système de connexion multi-utilisateurs supporté
 
-## Prochaines étapes prévues
-- 📥 Forcer l'enregistrement au format MP4 (pour faciliter l'importation dans la version mobile de Jianying/CapCut)
-- Plusieurs méthodes de téléchargement
-- Plusieurs méthodes de transcription audio en texte
-- Fonctionnalité de doublage non prise en charge pour le moment, en attente de la maturation de IndexTTS
+## Mises à jour récentes
 
-## Instructions d'installation
-⚠️ **WhisperX ne prend pas encore en charge CUDA 13**  
-Veuillez utiliser CUDA 12.9.1 : [Lien de téléchargement](https://developer.nvidia.com/cuda-12-9-1-download-archive)  
-Les étapes d'installation sont identiques à celles de la version originale. Veuillez vous référer à la [documentation d'installation originale](https://github.com/Huanshere/VideoLingo?tab=readme-ov-file#installation).
+Janvier 2026
+- Mise à jour des dépendances - y compris l'ancienne version d'av qui causait des erreurs
+- Optimisation du script d'installation automatique des dépendances
+- Mise à jour de la méthode de réglage de la largeur Streamlit/nouvelle largeur d'icône
+- Ajout de la fonctionnalité pour obtenir les modèles disponibles
+- Maintenance automatique des fichiers de traduction
+- Modification de la couleur de police des boutons
+- Interrupteur RoFormer dans la barre latérale
+- Mise à jour vers la dernière version de WhisperX
+- Remplacement de Demucs par BS-RoFormer
+
+Décembre 2025
+- Masquage de la barre de progression du téléchargement YouTube
+- Correction des erreurs de chemin
+
+Novembre 2025
+- Correction des erreurs de chemin
+- Correction des erreurs de séparation par deux-points
+- Correction de l'image de couverture
+- Activation du mode headless
+
+Novembre 2025
+- Correction du problème d'échec d'alignement
+- Prise en charge de la transcription Parakeet
+**https://github.com/lost0427/parakeet-api-vl**
+
+Septembre 2025
+- Correction de l'archivage vers history
+- Mise à jour des paramètres WhisperX
+- Mise à jour des mots-clés forts
+- Proxy de l'image de couverture
+- Affichage des formats standard et maximum de l'image de couverture
+- Correction du problème de couleur d'arrière-plan des métadonnées
+- Traitement des shorts YouTube
+- Script de service Windows
+- Paramètres VAD personnalisés
+- Conversion des heures de publication
+- Modifications du style des images et du texte
+- Bouton de téléchargement vidéo
+- Prise en charge de youtu.be
+- Nettoyage des liens YouTube
+- Mise à jour des traductions des options
+- Interrupteur d'affichage des informations vidéo YouTube
+- Interrupteur optionnel pour le téléchargement h264 (mp4)
+- Affichage des informations et de l'image de couverture de la vidéo YouTube
+- Interdiction d'exécuter plusieurs instances WhisperX simultanément
+- Interdiction des erreurs dues à l'exécution simultanée de plusieurs instances demucs
+- Fichier de configuration exemple pour l'authentification multi-utilisateurs
+- Ajout d'un système de connexion utilisateur, prise en charge multi-utilisateurs initialement terminée
+
+## Remarque
+
+Ce dépôt ne maintient pas la partie doublage
+
+## Méthode d'installation
+
+```
+conda create -n videolingo python==3.11.13
+conda activate videolingo
+python ./install.py
+```
