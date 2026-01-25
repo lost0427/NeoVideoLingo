@@ -78,9 +78,8 @@ def main():
     from rich.panel import Panel
     from rich.box import DOUBLE
     from InquirerPy import inquirer
-    from translations.translations import translate as t
+    from translations.translations import load_translations
     from translations.translations import DISPLAY_LANGUAGES
-    from core.config_utils import load_key, update_key
 
     console = Console()
     
@@ -93,16 +92,23 @@ def main():
         border_style="bright_blue"
     )
     console.print(welcome_panel)
-    # Language selection
-    current_language = load_key("display_language")
-    # Find the display name for current language code
-    current_display = next((k for k, v in DISPLAY_LANGUAGES.items() if v == current_language), "🇬🇧 English")
+
     selected_language = DISPLAY_LANGUAGES[inquirer.select(
         message="Select language / 选择语言 / 選擇語言 / 言語を選択 / Seleccionar idioma / Sélectionner la langue / Выберите язык:",
         choices=list(DISPLAY_LANGUAGES.keys()),
-        default=current_display
+        default="en"
     ).execute()]
-    update_key("display_language", selected_language)
+
+    def t(key):
+        try:
+            translations = load_translations(selected_language)
+            translation = translations.get(key)
+            if translation is None:
+                print(f"Warning: Translation not found for key '{key}' in language '{selected_language}'")
+                return key
+            return translation
+        except:
+            return key
 
     console.print(Panel.fit(t("🚀 Starting Installation"), style="bold magenta"))
 
