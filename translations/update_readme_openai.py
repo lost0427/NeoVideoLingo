@@ -1,5 +1,6 @@
 import os
 import configparser
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
 
 # --- 1. 路径初始化 ---
@@ -56,31 +57,58 @@ def save_file(path, content):
     with open(path, 'w', encoding='utf-8') as f:
         f.write(content)
 
-def translate_markdown(content, target_lang):
+def translate_markdown(content, target_lang, existing_translation=None):
     if not content: return ""
     
-    prompt = (
-        f"You are a professional translator. Translate the following Markdown content from Simplified Chinese to {target_lang}. "
-        "Rules:\n"
-        "1. Keep the Markdown format exactly the same (headers, bold, italics, links, images, tables, etc.).\n"
-        "2. Do NOT translate URLs, code blocks, or file paths.\n"
-        "3. Translate image alt texts and link descriptions if applicable.\n"
-        "4. Return ONLY the translated Markdown content without any explanation or ```markdown wrappers.\n"
-        "5. For the 'English | 简体中文 | ...' navigation bar, keep it as is or adapt appropriately, but don't break the links.\n"
-    )
+    if existing_translation:
+        prompt = (
+            f"You are a professional translator. Below is a Markdown document in Simplified Chinese (SOURCE) and its existing {target_lang} translation (EXISTING TRANSLATION). "
+            "The source may have been updated. Your task is to produce an updated translation.\n"
+            "Rules:\n"
+            "1. Keep the Markdown format exactly the same (headers, bold, italics, links, images, tables, etc.).\n"
+            "2. Do NOT translate URLs, code blocks, or file paths.\n"
+            "3. Preserve the existing translation as much as possible. Only modify parts where the source has changed.\n"
+            "4. If a section in the source is new or significantly different, translate it fresh.\n"
+            "5. Return ONLY the translated Markdown content without any explanation or ```markdown wrappers.\n"
+            "6. For the 'English | 简体中文 | ...' navigation bar, keep it as is or adapt appropriately, but don't break the links.\n"
+        )
+        user_content = f"{prompt}\n\n--- SOURCE ---\n{content}\n\n--- EXISTING TRANSLATION ---\n{existing_translation}"
+    else:
+        prompt = (
+            f"You are a professional translator. Translate the following Markdown content from Simplified Chinese to {target_lang}. "
+            "Rules:\n"
+            "1. Keep the Markdown format exactly the same (headers, bold, italics, links, images, tables, etc.).\n"
+            "2. Do NOT translate URLs, code blocks, or file paths.\n"
+            "3. Translate image alt texts and link descriptions if applicable.\n"
+            "4. Return ONLY the translated Markdown content without any explanation or ```markdown wrappers.\n"
+            "5. For the 'English | 简体中文 | ...' navigation bar, keep it as is or adapt appropriately, but don't break the links.\n"
+        )
+        user_content = f"{prompt}\n\nContent:\n{content}"
     
     try:
         response = client.chat.completions.create(
             model=MODEL,
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that translates Markdown documents."},
-                {"role": "user", "content": f"{prompt}\n\nContent:\n{content}"}
+                {"role": "user", "content": user_content}
             ],
         )
         return response.choices[0].message.content
     except Exception as e:
         print(f"❌ 翻译失败 ({target_lang}): {e}")
         return None
+
+def _translate_one(source_content, lang_code, lang_name):
+    """翻译单个语言，返回 (lang_code, lang_name, target_filename, translated_content)"""
+    target_filename = f"README.{lang_code}.md"
+    target_path = get_path(target_filename)
+
+    existing_translation = read_file(target_path)
+    mode = "增量更新" if existing_translation else "全新翻译"
+    print(f"  ⏳ 正在{mode} {lang_name} ({target_filename})...")
+
+    translated_content = translate_markdown(source_content, lang_name, existing_translation)
+    return lang_code, lang_name, target_filename, target_path, translated_content
 
 def sync_readme():
     print(f"📄 读取源文件: {SOURCE_FILE}")
@@ -89,22 +117,28 @@ def sync_readme():
         print(f"❌ 源文件未找到或为空")
         return
 
-    print(f"🚀 开始翻译 README (使用模型: {MODEL})...")
+    print(f"🚀 开始并发翻译 README (使用模型: {MODEL}, 共 {len(TARGET_LANGS)} 个语言)...\n")
 
-    for lang_code, lang_name in TARGET_LANGS.items():
-        target_filename = f"README.{lang_code}.md"
-        target_path = get_path(target_filename)
-        
-        print(f"  ⏳ 正在翻译为 {lang_name} ({target_filename})...")
-        translated_content = translate_markdown(source_content, lang_name)
-        
-        if translated_content:
-            save_file(target_path, translated_content)
-            print(f"  ✅ 已保存: {target_filename}")
-        else:
-            print(f"  ⚠️ 跳过: {target_filename}")
+    with ThreadPoolExecutor(max_workers=len(TARGET_LANGS)) as executor:
+        futures = {
+            executor.submit(_translate_one, source_content, lang_code, lang_name): lang_code
+            for lang_code, lang_name in TARGET_LANGS.items()
+        }
 
-    print("\n🎉 所有翻译任务完成！")
+        success_count = 0
+        fail_count = 0
+        for future in as_completed(futures):
+            lang_code, lang_name, target_filename, target_path, translated_content = future.result()
+            if translated_content:
+                save_file(target_path, translated_content)
+                print(f"  ✅ 已保存: {target_filename}")
+                success_count += 1
+            else:
+                print(f"  ⚠️ 跳过: {target_filename}")
+                fail_count += 1
+
+    print(f"\n🎉 翻译完成！成功: {success_count}, 失败: {fail_count}")
 
 if __name__ == "__main__":
     sync_readme()
+
