@@ -13,6 +13,37 @@
 Version basée sur le développement secondaire de [Huanshere/VideoLingo](https://github.com/Huanshere/VideoLingo).  
 Pour les fonctionnalités et la documentation complètes de la version originale, veuillez consulter [le dépôt original](https://github.com/Huanshere/VideoLingo).
 
+## Introduction
+VideoLingo est un outil de traduction, de localisation et de doublage vidéo tout-en-un, capable de générer en un clic des sous-titres de qualité Netflix, disant adieu aux traductions robotiques maladroites et aux sous-titres multilignes, et pouvant même ajouter un doublage cloné de haute qualité, permettant ainsi au savoir mondial de transcender les obstacles linguistiques.
+
+Principales caractéristiques et fonctionnalités :
+
+🎥 Téléchargement de vidéos à partir de liens Youtube en utilisant yt-dlp
+
+🎙️ Reconnaissance de sous-titres au niveau mot avec WhisperX et faible hallucination
+
+📝 Segmentation des sous-titres utilisant le TPN et l'IA
+
+📚 Base de terminologie personnalisée + générée par IA, garantissant la cohérence de la traduction
+
+🔄 Traduction directe en trois étapes, réflexion, traduction libre, pour une qualité de traduction de niveau cinématographique
+
+✅ Vérification selon les normes Netflix de la longueur des lignes uniques, jamais de sous-titres doubles
+
+🗣️ Prise en charge de multiples solutions de doublage : GPT-SoVITS, Azure, OpenAI, etc.
+
+🚀 Lancement en un clic, création de vidéos en un clic dans streamlit
+
+🌍 Interface utilisateur streamlit prête pour la prise en charge multilingue
+
+📝 Journalisation détaillée de chaque étape, prise en charge de l'interruption et de la reprise à tout moment
+
+Avantages par rapport aux projets similaires : jamais de sous-titres multilignes, meilleure qualité de traduction, expérience de doublage fluide
+
+## Prise en charge des langues
+Prise en charge des langues d'entrée :
+
+🇨🇳 Chinois | 🇺🇸 Anglais | 🇷🇺 Russe | 🇫🇷 Français | 🇩🇪 Allemand | 🇮🇹 Italien | 🇪🇸 Espagnol | 🇯🇵 Japonais | 🇧🇬 Bulgare | 🇭🇷 Croate | 🇨🇿 Tchèque | 🇩🇰 Danois | 🇳🇱 Néerlandais | 🇪🇪 Estonien | 🇫🇮 Finnois | 🇬🇷 Grec | 🇭🇺 Hongrois | 🇱🇻 Letton | 🇱🇹 Lituanien | 🇲🇹 Maltais | 🇵🇱 Polonais | 🇵🇹 Portugais | 🇷🇴 Roumain | 🇸🇰 Slovaque | 🇸🇮 Slovène | 🇸🇪 Suédois | 🇺🇦 Ukrainien
 
 ## Mises à jour récentes
 
