@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="/docs/logo.png" alt="Logo VideoLingo" height="140">
+<img src="/docs/logo.webp" alt="NeoVideoLingo Logo" height="140">
 
 # Connecter chaque frame du monde
 
@@ -14,31 +14,17 @@ Version basée sur le développement secondaire de [Huanshere/VideoLingo](https:
 Pour les fonctionnalités et la documentation complètes de la version originale, veuillez consulter [le dépôt original](https://github.com/Huanshere/VideoLingo).
 
 ## Introduction
-VideoLingo est un outil de traduction, de localisation et de doublage vidéo tout-en-un, capable de générer en un clic des sous-titres de qualité Netflix, disant adieu aux traductions robotiques maladroites et aux sous-titres multilignes, et pouvant même ajouter un doublage cloné de haute qualité, permettant ainsi au savoir mondial de transcender les obstacles linguistiques.
+NeoVideoLingo : Outil de localisation vidéo tout-en-un de haute qualité
 
-Principales caractéristiques et fonctionnalités :
+🎥 Traitement intelligent : Intégration de yt-dlp pour le téléchargement, reconnaissance par WhisperX / Parakeet, segmentation précise des sous-titres via algorithmes NLP.
 
-🎥 Téléchargement de vidéos à partir de liens Youtube en utilisant yt-dlp
+📝 Traduction parfaite : Adopte un processus en trois étapes "traduction littérale-réflexion-traduction libre", combiné à une base de terminologie personnalisée, pour éviter toute sensation de traduction automatique.
 
-🎙️ Reconnaissance de sous-titres au niveau mot avec WhisperX et faible hallucination
+✅ Expérience visuelle : Application stricte des normes de sous-titres Netflix, garantissant que chaque phrase soit affichée sur une seule ligne, sans effort de lecture.
 
-📝 Segmentation des sous-titres utilisant le TPN et l'IA
+🗣️ Synthèse vocale : Support indextts2.0 bientôt disponible.
 
-📚 Base de terminologie personnalisée + générée par IA, garantissant la cohérence de la traduction
-
-🔄 Traduction directe en trois étapes, réflexion, traduction libre, pour une qualité de traduction de niveau cinématographique
-
-✅ Vérification selon les normes Netflix de la longueur des lignes uniques, jamais de sous-titres doubles
-
-🗣️ Prise en charge de multiples solutions de doublage : GPT-SoVITS, Azure, OpenAI, etc.
-
-🚀 Lancement en un clic, création de vidéos en un clic dans streamlit
-
-🌍 Interface utilisateur streamlit prête pour la prise en charge multilingue
-
-📝 Journalisation détaillée de chaque étape, prise en charge de l'interruption et de la reprise à tout moment
-
-Avantages par rapport aux projets similaires : jamais de sous-titres multilignes, meilleure qualité de traduction, expérience de doublage fluide
+🚀 Opération pratique : Interface Streamlit avec lancement en un clic, journalisation complète du processus, support de l'interruption et de la reprise à tout moment.
 
 ## Prise en charge des langues
 Prise en charge des langues d'entrée :

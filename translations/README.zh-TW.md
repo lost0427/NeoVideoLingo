@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="/docs/logo.png" alt="VideoLingo Logo" height="140">
+<img src="/docs/logo.webp" alt="NeoVideoLingo Logo" height="140">
 
 # 連接世界每一幀
 
@@ -14,31 +14,17 @@
 原版完整功能和文檔請見 [原倉庫](https://github.com/Huanshere/VideoLingo)。
 
 ## 簡介
-VideoLingo 是一站式視頻翻譯本地化配音工具，能夠一鍵生成 Netflix 級別的高質量字幕，告別生硬機翻，告別多行字幕，還能加上高質量的克隆配音，讓全世界的知識能夠跨越語言的障礙共享。
+NeoVideoLingo：一站式高質量視頻本地化工具
 
-主要特點和功能：
+🎥 智能處理：集成 yt-dlp 下載 WhisperX / Parakeet 識別，通過 NLP 算法精確進行字幕分割。
 
-🎥 使用 yt-dlp 從 Youtube 鏈接下載視頻
+📝 完美翻譯：採用"直譯-反思-意譯"三步流程，結合自定義術語庫，拒絕機翻感。
 
-🎙️ 使用 WhisperX 進行單詞級和低幻覺字幕識別
+✅ 視覺體驗：嚴格執行 Netflix 字幕標準，確保每一句都是單行展示，閱讀無壓力。
 
-📝 使用 NLP 和 AI 進行字幕分割
+🗣️ 語音合成：即將上線 indextts2.0 支持。
 
-📚 自定義 + AI 生成術語庫，保證翻譯連貫性
-
-🔄 三步直譯、反思、意譯，實現影視級翻譯質量
-
-✅ 按照 Netflix 標準檢查單行長度，絕無雙行字幕
-
-🗣️ 支持 GPT-SoVITS、Azure、OpenAI 等多種配音方案
-
-🚀 一鍵啟動，在 streamlit 中一鍵出片
-
-🌍 多語言支持就緒的 streamlit UI
-
-📝 詳細記錄每步操作日誌，支持隨時中斷和恢復進度
-
-與同類項目相比的優勢：絕無多行字幕，最佳的翻譯質量，無縫的配音體驗
+🚀 便捷操作：Streamlit 界面一鍵啟動，全程日誌記錄，支持隨時中斷恢復。
 
 ## 語言支持
 輸入語言支持：

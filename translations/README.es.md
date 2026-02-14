@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="/docs/logo.png" alt="Logotipo de VideoLingo" height="140">
+<img src="/docs/logo.webp" alt="NeoVideoLingo Logo" height="140">
 
 # Conectando cada fotograma del mundo
 
@@ -14,31 +14,17 @@ Versión basada en desarrollo secundario de [Huanshere/VideoLingo](https://githu
 Para ver las funciones completas y la documentación originales, visite el [repositorio original](https://github.com/Huanshere/VideoLingo).
 
 ## Introducción
-VideoLingo es una herramienta todo en uno para traducir, localizar y doblar videos. Puede generar subtítulos de alta calidad al nivel de Netflix con un solo clic, dejando atrás las traducciones mecánicas rígidas y los subtítulos multilínea, e incluso agregar doblaje clonado de alta calidad, permitiendo que el conocimiento mundial se comparta más allá de las barreras lingüísticas.
+NeoVideoLingo: herramienta de localización de video de alta calidad todo en uno
 
-Características y funciones principales:
+🎥 Procesamiento inteligente: integración de yt-dlp para descargar, reconocimiento WhisperX / Parakeet, segmentación precisa de subtítulos mediante algoritmos NLP.
 
-🎥 Descargar videos desde enlaces de Youtube usando yt-dlp
+📝 Traducción perfecta:采用"traducción literal-reflexión-traducción interpretativa" proceso de tres pasos, combinado con biblioteca de términos personalizados, rechazando la sensación de traducción mecánica.
 
-🎙️ Reconocimiento de subtítulos a nivel de palabra y con bajo nivel de alucinación usando WhisperX
+✅ Experiencia visual: cumplimiento estricto de los estándares de subtítulos de Netflix, asegurando que cada frase se muestre en una sola línea, lectura sin estrés.
 
-📝 División de subtítulos mediante NLP y IA
+🗣️ Síntesis de voz: soporte para indextts2.0 próximamente.
 
-📚 Biblioteca de términos personalizada + generada por IA, garantizando coherencia en la traducción
-
-🔄 Traducción directa, reflexión y traducción por sentido en tres pasos, logrando calidad cinematográfica en traducción
-
-✅ Verificación según estándares de Netflix de longitud de línea simple, sin ningún subtítulo de doble línea
-
-🗣️ Compatible con múltiples soluciones de doblaje como GPT-SoVITS, Azure, OpenAI, etc.
-
-🚀 Inicio con un clic, creación de videos con un clic en streamlit
-
-🌍 Interfaz de usuario en streamlit lista para soportar múltiples idiomas
-
-📝 Registro detallado de cada paso del proceso, admite interrupción y reanudación en cualquier momento
-
-Ventajas comparadas con proyectos similares: sin subtítulos multilínea, mejor calidad de traducción, experiencia de doblaje perfecta
+🚀 Operación conveniente: interfaz Streamlit con inicio de un solo clic, registro completo del proceso, soporte para interrupción y recuperación en cualquier momento.
 
 ## Soporte de idiomas
 Soporte de idiomas de entrada:
@@ -97,7 +83,7 @@ Septiembre 2025
 - Archivo de ejemplo de configuración para autenticación multiusuario
 - Añadido sistema de inicio de sesión de usuarios, soporte multiusuario completado parcialmente
 
-## Advertencia
+## Nota
 
 Este repositorio no mantiene la parte de doblaje
 

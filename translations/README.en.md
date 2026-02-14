@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="/docs/logo.png" alt="VideoLingo Logo" height="140">
+<img src="/docs/logo.webp" alt="NeoVideoLingo Logo" height="140">
 
 # Connecting Every Frame of the World
 
@@ -14,31 +14,17 @@ A secondary development version based on [Huanshere/VideoLingo](https://github.c
 For the original complete features and documentation, please refer to the [original repository](https://github.com/Huanshere/VideoLingo).
 
 ## Introduction
-VideoLingo is a one-stop video translation localization dubbing tool that can generate Netflix-level high-quality subtitles with one click, say goodbye to rigid machine translation, goodbye to multi-line subtitles, and add high-quality clone dubbing, allowing knowledge from around the world to be shared across language barriers.
+NeoVideoLingo: One-stop high-quality video localization tool
 
-Main features and functions:
+🎥 Intelligent processing: Integrated yt-dlp download WhisperX / Parakeet recognition, precise subtitle segmentation through NLP algorithms.
 
-🎥 Download videos from YouTube links using yt-dlp
+📝 Perfect translation: Adopting a three-step process of "literal translation-reflection-free translation", combined with custom terminology libraries, avoiding machine translation feel.
 
-🎙️ Word-level and low-hallucination subtitle recognition using WhisperX
+✅ Visual experience: Strictly implementing Netflix subtitle standards, ensuring every sentence is displayed in a single line, stress-free reading.
 
-📝 Subtitle segmentation using NLP and AI
+🗣️ Voice synthesis: Coming soon indextts2.0 support.
 
-📚 Custom + AI-generated terminology library to ensure translation consistency
-
-🔄 Three-step direct translation, reflection, free translation to achieve film and television quality translation
-
-✅ Check single-line length according to Netflix standards, absolutely no double-line subtitles
-
-🗣️ Support multiple dubbing solutions such as GPT-SoVITS, Azure, OpenAI, etc.
-
-🚀 One-click start, one-click output in streamlit
-
-🌍 Multilingual support ready streamlit UI
-
-📝 Detailed logging of each operation step, supports interruption and resumption at any time
-
-Advantages compared to similar projects: absolutely no multi-line subtitles, best translation quality, seamless dubbing experience
+🚀 Convenient operation: Streamlit interface one-click start, full-process log recording, supporting interruption and resumption anytime.
 
 ## Language Support
 Input language support:
