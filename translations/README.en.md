@@ -37,7 +37,7 @@ November 2025
 - Fixed cover image
 - Enabled headless mode
 
-November 2025
+October 2025
 - Fixed alignment failure issue
 - Added support for Parakeet transcription
 **https://github.com/lost0427/parakeet-api-vl**

@@ -37,7 +37,7 @@
 - 修复封面图
 - 启用无头模式
 
-2025年11月
+2025年10月
 - 修复对齐失败问题
 - 支持Parakeet转录
 **https://github.com/lost0427/parakeet-api-vl**

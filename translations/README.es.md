@@ -37,7 +37,7 @@ Noviembre 2025
 - Corrección de imagen de portada
 - Activación del modo headless
 
-Noviembre 2025
+Octubre 2025
 - Corrección de problema de alineación fallida
 - Soporte para transcripción Parakeet
 **https://github.com/lost0427/parakeet-api-vl**
