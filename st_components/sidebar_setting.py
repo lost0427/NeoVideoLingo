@@ -115,12 +115,24 @@ def page_setting():
             update_key("burn_subtitles", burn_subtitles, username=username)
             st.rerun()
 
-        parakeet = st.toggle("Use Parakeet", value=load_key("parakeet", username=username), help="Use Parakeet instead of whisperx")
-        if parakeet != load_key("parakeet", username=username):
-            update_key("parakeet", parakeet, username=username)
+        transcription_methods = ["whisperX", "parakeet", "qwenasr"]
+        current_method = load_key("transcription_method", username=username)
+        if current_method not in transcription_methods:
+            current_method = "whisperX"
+        selected_method = st.selectbox(
+            t("Transcription Method"),
+            options=transcription_methods,
+            index=transcription_methods.index(current_method),
+            help=t("Select the transcription engine: whisperX, Parakeet, or QwenASR")
+        )
+        if selected_method != load_key("transcription_method", username=username):
+            update_key("transcription_method", selected_method, username=username)
             st.rerun()
 
-        config_input("Parakeet API", "parakeet_url")
+        if selected_method == "parakeet":
+            config_input("Parakeet API", "parakeet_url")
+        elif selected_method == "qwenasr":
+            config_input("QwenASR API", "qwenasr_url")
 
     with st.expander(t("Dubbing Settings"), expanded=True):
         tts_methods = ["azure_tts", "openai_tts", "fish_tts", "sf_fish_tts", "edge_tts", "gpt_sovits", "custom_tts", "sf_cosyvoice2"]

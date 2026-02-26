@@ -29,9 +29,49 @@ NeoVideoLingo: herramienta de localización de video de alta calidad todo en uno
 ## Soporte de idiomas
 Soporte de idiomas de entrada:
 
-🇨🇳 Chino | 🇺🇸 Inglés | 🇷🇺 Ruso | 🇫🇷 Francés | 🇩🇪 Alemán | 🇮🇹 Italiano | 🇪🇸 Español | 🇯🇵 Japonés | 🇧🇬 Búlgaro | 🇭🇷 Croata | 🇨🇿 Checo | 🇩🇰 Danés | 🇳🇱 Holandés | 🇪🇪 Estonio | 🇫🇮 Finlandés | 🇬🇷 Griego | 🇭🇺 Húngaro | 🇱🇻 Letón | 🇱🇹 Lituano | 🇲🇹 Maltés | 🇵🇱 Polaco | 🇵🇹 Portugués | 🇷🇴 Rumano | 🇸🇰 Eslovaco | 🇸🇮 Esloveno | 🇸🇪 Sueco | 🇺🇦 Ucraniano
+🇨🇳 Chino | 🇺🇸 Inglés | 🇷🇺 Ruso | 🇫🇷 Francés | 🇩🇪 Alemán | 🇮🇹 Italiano | 🇪🇸 Español | 🇯🇵 Japonés | 🇧🇬 Búlgaro | 🇭🇷 Croata | 🇨🇿 Checo | 🇩🇰 Danés | 🇳🇱 Holandés | 🇪🇪 Estonio | 🇫🇮 Finlandés | 🇬🇷 Griego | 🇭🇺 Húngaro | 🇱🇻 Letón | 🇱🇹 Lituano | 🇲🇹 Maltés | 🇵🇱 Polaco | 🇵🇹 Portugués | 🇷🇴 Rumano | 🇸🇰 Eslovaco | 🇸🇮 Esloveno | 🇸🇪 Sueco | 🇺🇦 Ucraniano | 🇭🇰 Cantonés | 🇸🇦 Árabe | 🇮🇩 Indonesio | 🇰🇷 Coreano | 🇹🇭 Tailandés | 🇻🇳 Vietnamita | 🇹🇷 Turco | 🇮🇳 Hindi | 🇲🇾 Malay | 🇵🇭 Filipino | 🇮🇷 Persa | 🇲🇰 Macedonio
+
+Soporte de dialectos:
+Anhui, Nordeste, Fujian, Gansu, Guizhou, Hebei, Henan, Hubei, Hunan, Jiangxi, Ningxia, Shandong, Shaanxi, Shanxi, Sichuan, Tianjin, Yunnan, Zhejiang, Cantonés (Hong Kong), Cantonés (Guangdong), Wu, Minnan
+
+## Tutorial de instalación de Qwen3ASR
+Según la guía oficial:
+
+"Para facilitar el uso de nuestro paquete Python qwen-asr, proporcionamos una imagen Docker preconstruida: qwenllm/qwen3-asr. Solo necesita instalar los controladores de GPU y descargar los archivos del modelo para ejecutar el código. Siga la guía de instalación de NVIDIA Container Toolkit para asegurar que Docker pueda acceder a su GPU. Si se encuentra en China continental y no puede conectarse a Docker Hub, puede utilizar el caché de imagen para acelerar la descarga de la imagen."
+
+En Windows, instale Docker, cree un archivo .ps1 o ingréselo directamente en PowerShell:
+
+```
+$LOCAL_WORKDIR = "F:\Docker\qwen3asr"
+$HOST_PORT = 8700
+$CONTAINER_PORT = 80
+docker run --gpus all --name qwen3-asr `
+    -v /var/run/docker.sock:/var/run/docker.sock `
+    -p "${HOST_PORT}:${CONTAINER_PORT}" `
+    --mount "type=bind,source=${LOCAL_WORKDIR},target=/data/shared/Qwen3-ASR" `
+    --shm-size=4gb `
+    -it qwenllm/qwen3-asr:latest
+```
+Si encuentra problemas de red, puede intentar usar
+
+docker.1ms.run/qwenllm/qwen3-asr
+
+Después de descargar y arrancar exitosamente el contenedor, el servicio de transcripción no se iniciará automáticamente, consulte el archivo de este proyecto
+
+\core\all_whisper_methods\qwenasrvl.py
+
+```
+#vim /usr/local/bin/qwenasrvl
+#chmod +x /usr/local/bin/qwenasrvl
+#qwenasrvl
+```
+Siga las indicaciones para escribir el archivo y otorgar permisos, luego ejecútelo. Usa el marco vllm, ejecutándose en el puerto 80 del contenedor (puerto 8700 del host).
 
 ## Actualizaciones recientes
+Febrero 2026
+- Actualización del nuevo método de transcripción de idiomas Qwen3ASR
+(Qwen3-ASR-1.7B + Qwen3-ForcedAligner-0.6B)
+https://github.com/QwenLM/Qwen3-ASR
 
 Enero 2026
 - Actualización de dependencias - incluyendo la versión antigua de av que causaba errores previamente

@@ -29,16 +29,56 @@ NeoVideoLingo: One-stop high-quality video localization tool
 ## Language Support
 Input language support:
 
-🇨🇳 Chinese | 🇺🇸 English | 🇷🇺 Russian | 🇫🇷 French | 🇩🇪 German | 🇮🇹 Italian | 🇪🇸 Spanish | 🇯🇵 Japanese | 🇧🇬 Bulgarian | 🇭🇷 Croatian | 🇨🇿 Czech | 🇩🇰 Danish | 🇳🇱 Dutch | 🇪🇪 Estonian | 🇫🇮 Finnish | 🇬🇷 Greek | 🇭🇺 Hungarian | 🇱🇻 Latvian | 🇱🇹 Lithuanian | 🇲🇹 Maltese | 🇵🇱 Polish | 🇵🇹 Portuguese | 🇷🇴 Romanian | 🇸🇰 Slovak | 🇸🇮 Slovenian | 🇸🇪 Swedish | 🇺🇦 Ukrainian
+🇨🇳 Chinese | 🇺🇸 English | 🇷🇺 Russian | 🇫🇷 French | 🇩🇪 German | 🇮🇹 Italian | 🇪🇸 Spanish | 🇯🇵 Japanese | 🇧🇬 Bulgarian | 🇭🇷 Croatian | 🇨🇿 Czech | 🇩🇰 Danish | 🇳🇱 Dutch | 🇪🇪 Estonian | 🇫🇮 Finnish | 🇬🇷 Greek | 🇭🇺 Hungarian | 🇱🇻 Latvian | 🇱🇹 Lithuanian | 🇲🇹 Maltese | 🇵🇱 Polish | 🇵🇹 Portuguese | 🇷🇴 Romanian | 🇸🇰 Slovak | 🇸🇮 Slovenian | 🇸🇪 Swedish | 🇺🇦 Ukrainian | 🇭🇰 Cantonese | 🇸🇦 Arabic | 🇮🇩 Indonesian | 🇰🇷 Korean | 🇹🇭 Thai | 🇻🇳 Vietnamese | 🇹🇷 Turkish | 🇮🇳 Hindi | 🇲🇾 Malay | 🇵🇭 Filipino | 🇮🇷 Persian | 🇲🇰 Macedonian
+
+Supported dialects:
+Anhui, Northeast, Fujian, Gansu, Guizhou, Hebei, Henan, Hubei, Hunan, Jiangxi, Ningxia, Shandong, Shaanxi, Shanxi, Sichuan, Tianjin, Yunnan, Zhejiang, Cantonese (Hong Kong accent), Cantonese (Guangdong accent), Wu, Minnan
+
+## Qwen3ASR Installation Tutorial
+According to the official tutorial:
+
+"To make our qwen-asr Python package easier to use, we provide a pre-built Docker image: qwenllm/qwen3-asr. You only need to install GPU drivers and download model files to run the code. Please follow the NVIDIA Container Toolkit installation guide to ensure Docker can access your GPU. If you're in mainland China and unable to connect to Docker Hub, you can use image caching to accelerate image pulling."
+
+On Windows, install Docker, create a .ps1 file or directly input into PowerShell:
+
+```
+$LOCAL_WORKDIR = "F:\Docker\qwen3asr"
+$HOST_PORT = 8700
+$CONTAINER_PORT = 80
+docker run --gpus all --name qwen3-asr `
+    -v /var/run/docker.sock:/var/run/docker.sock `
+    -p "${HOST_PORT}:${CONTAINER_PORT}" `
+    --mount "type=bind,source=${LOCAL_WORKDIR},target=/data/shared/Qwen3-ASR" `
+    --shm-size=4gb `
+    -it qwenllm/qwen3-asr:latest
+```
+If network issues occur, try using
+
+docker.1ms.run/qwenllm/qwen3-asr
+
+After successfully downloading and starting the container, the transcription service will not start automatically. Check this project's
+
+\core\all_whisper_methods\qwenasrvl.py
+
+```
+#vim /usr/local/bin/qwenasrvl
+#chmod +x /usr/local/bin/qwenasrvl
+#qwenasrvl
+```
+Follow the prompts to write the file and grant permissions, then run it. Using the vLLM framework, it runs on port 80 within the container (port 8700 on the host).
 
 ## Recent Updates
+February 2026
+- Updated new transcription method Qwen3ASR
+(Qwen3-ASR-1.7B + Qwen3-ForcedAligner-0.6B)
+https://github.com/QwenLM/Qwen3-ASR
 
 January 2026
-- Updated dependencies - including the old av version that was causing errors previously
-- Optimized automatic dependency installation script
+- Updated dependencies - including previous problematic av version
+- Optimized auto-installation script for dependencies
 - Updated new Streamlit width/icon width setting methods
-- Added feature to get available models
-- Automatic maintenance of translation files
+- Added function to retrieve available models
+- Auto-maintenance of translation files
 - Modified button font color
 - Sidebar RoFormer toggle switch
 - Updated to latest version of WhisperX
@@ -46,11 +86,11 @@ January 2026
 
 December 2025
 - Hidden YouTube download progress bar
-- Fixed path errors
+- Fixed path error
 
 November 2025
-- Fixed path errors
-- Fixed colon splitting error
+- Fixed path error
+- Fixed colon split error
 - Fixed cover image
 - Enabled headless mode
 
@@ -61,31 +101,31 @@ October 2025
 
 September 2025
 - Fixed archiving to history
-- WhisperX parameter settings update
-- Strong prompt word updates
+- Updated WhisperX parameter settings
+- Updated strong prompt words
 - Cover image proxy
 - Display standard and maximum cover images
 - Fixed metadata background color issue
-- Handle youtube shorts
+- Handle YouTube Shorts
 - Windows service script
-- Custom vad parameters
+- Custom VAD parameters
 - Release time conversion
 - Image and text style modifications
 - Download video button
 - youtu.be support
-- Clean YouTube links
+- Cleaned YouTube links
 - Updated option translations
-- Show YouTube video info toggle
+- Toggle for showing YouTube video info
 - Optional download h264 (mp4) toggle
 - Show YouTube video info and cover image
-- Prevent multiple WhisperX running simultaneously
-- Prevent multiple demucs running simultaneously causing errors
-- Multi-user authentication example configuration file
+- Prevent multiple WhisperX from running simultaneously
+- Prevent multiple demucs from running simultaneously causing errors
+- Example configuration file for multi-user authentication
 - Added user login system, preliminary multi-user support completed
 
 ## Note
 
-This repository does not maintain the dubbing functionality
+This repository does not maintain the dubbing part
 
 ## Installation Method
 

@@ -117,5 +117,7 @@
     "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier": "Seuil de fin de Détection d’Activité Vocale - Plage : 0-1, plus bas = détecte les signaux faibles, plus élevé = termine plus tôt",
     "🔄 Fetch Available Models": "🔄 Récupérer les modèles disponibles",
     "Found {count} models": "Trouvé {count} modèles",
-    "📋 Available Models": "📋 Modèles disponibles"
+    "📋 Available Models": "📋 Modèles disponibles",
+    "Transcription Method": "Méthode de transcription",
+    "Select the transcription engine: whisperX, Parakeet, or QwenASR": "Sélectionnez le moteur de transcription : whisperX, Parakeet ou QwenASR"
 }

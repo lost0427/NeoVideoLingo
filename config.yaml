@@ -24,9 +24,12 @@ metadata: true
 # Enable windsurf strong prompt: helps weak models keep proper nouns untranslated, may harm advanced models
 windsurf_prompt: true
 
-parakeet: true
+# Transcription method: whisperX, parakeet, qwenasr
+transcription_method: "parakeet"
 
 parakeet_url: "http://127.0.0.1:5005"
+
+qwenasr_url: "http://127.0.0.1:8700"
 
 target_len: 1200
 

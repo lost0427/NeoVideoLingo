@@ -66,38 +66,48 @@ def transcribe():
     
     # step4 Transcribe audio
     all_results = []
-    if not load_key("parakeet", username=username):
+    transcription_method = load_key("transcription_method", username=username)
+
+    if transcription_method == "parakeet":
+        from core.all_whisper_methods.parakeet import parakeet_transcribe as para
+        rprint("[cyan]🎤 Transcribing audio with Parakeet...[/cyan]")
+        target_len = int(load_key("target_len"))
+        segments = split_audio(whisper_audio, target_len=target_len)
+        for start, end in segments:
+            result = para(whisper_audio, username, start, end)
+            all_results.append(result)
+
+    elif transcription_method == "qwenasr":
+        from core.all_whisper_methods.qwenasr import qwenasr_transcribe as qwen
+        rprint("[cyan]🎤 Transcribing audio with QwenASR...[/cyan]")
+        target_len = int(load_key("target_len"))
+        segments = split_audio(whisper_audio, target_len=target_len)
+        for start, end in segments:
+            result = qwen(whisper_audio, username, start, end)
+            all_results.append(result)
+
+    else:  # whisperX (default)
         if load_key("whisper.runtime", username=username) == "local":
             from core.all_whisper_methods.whisperX_local import transcribe_audio as ts
             rprint("[cyan]🎤 Transcribing audio with local model...[/cyan]")
         else:
             from core.all_whisper_methods.whisperX_302 import transcribe_audio_302 as ts
             rprint("[cyan]🎤 Transcribing audio with 302 API...[/cyan]")
-        # step3 Extract audio
         segments = split_audio(whisper_audio)
         for start, end in segments:
             result = ts(whisper_audio, start, end)
             all_results.append(result)
-    else:
-        from core.all_whisper_methods.parakeet import parakeet_transcribe as para
-        # step3 Extract audio
-        target_len = int(load_key("target_len"))
-
-        segments = split_audio(whisper_audio, target_len=target_len)
-
-        count = 0
-
-        for start, end in segments:
-            print(whisper_audio)
-            print(start)
-            print(end)
-            result = para(whisper_audio, username, start, end)
-            all_results.append(result)
-            count += 1
     
     # step5 Combine results
     combined_result = {'segments': []}
-    for result in all_results:
+    for i, result in enumerate(all_results):
+        if 'error' in result:
+            error_msg = result['error']
+            rprint(f"[red]❌ Transcription segment {i} failed: {error_msg}[/red]")
+            raise RuntimeError(f"Transcription failed at segment {i}: {error_msg}")
+        if 'segments' not in result:
+            rprint(f"[red]❌ Transcription segment {i} returned unexpected format: {result}[/red]")
+            raise RuntimeError(f"Transcription segment {i} returned unexpected format (missing 'segments' key)")
         combined_result['segments'].extend(result['segments'])
     
     # step6 Process df

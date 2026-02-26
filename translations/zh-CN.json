@@ -117,5 +117,7 @@
     "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier": "语音活动检测结束阈值 - 范围: 0-1，数值越低可检测到弱信号，数值越高则更早结束",
     "🔄 Fetch Available Models": "🔄 获取可用模型",
     "Found {count} models": "找到 {count} 个模型",
-    "📋 Available Models": "📋 可用模型"
+    "📋 Available Models": "📋 可用模型",
+    "Transcription Method": "转录方法",
+    "Select the transcription engine: whisperX, Parakeet, or QwenASR": "选择转录引擎：whisperX、Parakeet 或 QwenASR"
 }

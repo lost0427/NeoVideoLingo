@@ -29,9 +29,49 @@ NeoVideoLingo：一站式高质量视频本地化工具
 ## 语言支持
 输入语言支持：
 
-🇨🇳 中文 | 🇺🇸 英语 | 🇷🇺 俄语 | 🇫🇷 法语 | 🇩🇪 德语 | 🇮🇹 意大利语 | 🇪🇸 西班牙语 | 🇯🇵 日语 | 🇧🇬 保加利亚语 | 🇭🇷 克罗地亚语 | 🇨🇿 捷克语 | 🇩🇰 丹麦语 | 🇳🇱 荷兰语 | 🇪🇪 爱沙尼亚语 | 🇫🇮 芬兰语 | 🇬🇷 希腊语 | 🇭🇺 匈牙利语 | 🇱🇻 拉脱维亚语 | 🇱🇹 立陶宛语 | 🇲🇹 马耳他语 | 🇵🇱 波兰语 | 🇵🇹 葡萄牙语 | 🇷🇴 罗马尼亚语 | 🇸🇰 斯洛伐克语 | 🇸🇮 斯洛文尼亚语 | 🇸🇪 瑞典语 | 🇺🇦 乌克兰语
+🇨🇳 中文 | 🇺🇸 英语 | 🇷🇺 俄语 | 🇫🇷 法语 | 🇩🇪 德语 | 🇮🇹 意大利语 | 🇪🇸 西班牙语 | 🇯🇵 日语 | 🇧🇬 保加利亚语 | 🇭🇷 克罗地亚语 | 🇨🇿 捷克语 | 🇩🇰 丹麦语 | 🇳🇱 荷兰语 | 🇪🇪 爱沙尼亚语 | 🇫🇮 芬兰语 | 🇬🇷 希腊语 | 🇭🇺 匈牙利语 | 🇱🇻 拉脱维亚语 | 🇱🇹 立陶宛语 | 🇲🇹 马耳他语 | 🇵🇱 波兰语 | 🇵🇹 葡萄牙语 | 🇷🇴 罗马尼亚语 | 🇸🇰 斯洛伐克语 | 🇸🇮 斯洛文尼亚语 | 🇸🇪 瑞典语 | 🇺🇦 乌克兰语 | 🇭🇰 粤语 | 🇸🇦 阿拉伯语 | 🇮🇩 印尼语 | 🇰🇷 韩语 | 🇹🇭 泰语 | 🇻🇳 越南语 | 🇹🇷 土耳其语 | 🇮🇳 印地语 | 🇲🇾 马来语 | 🇵🇭 菲律宾语 | 🇮🇷 波斯语 | 🇲🇰 马其顿语
+
+支持的方言：
+安徽、东北、福建、甘肃、贵州、河北、河南、湖北、湖南、江西、宁夏、山东、陕西、山西、四川、天津、云南、浙江、粤语（香港口音）、粤语（广东口音）、吴语、闽南语
+
+## Qwen3ASR 安装教程
+根据官方教程：
+
+“为了让我们的 qwen-asr Python 包更容易使用，我们提供了一个预构建的 Docker 镜像：qwenllm/qwen3-asr。您只需要安装 GPU 驱动程序并下载模型文件即可运行代码。请按照 NVIDIA 容器工具包的安装指南操作，以确保 Docker 可以访问您的 GPU。如果您在中国大陆并且无法连接到 Docker Hub，您可以使用镜像缓存来加速镜像拉取。”
+
+在Windows上，安装Docker，创建.ps1文件或直接输入到powershell：
+
+```
+$LOCAL_WORKDIR = "F:\Docker\qwen3asr"
+$HOST_PORT = 8700
+$CONTAINER_PORT = 80
+docker run --gpus all --name qwen3-asr `
+    -v /var/run/docker.sock:/var/run/docker.sock `
+    -p "${HOST_PORT}:${CONTAINER_PORT}" `
+    --mount "type=bind,source=${LOCAL_WORKDIR},target=/data/shared/Qwen3-ASR" `
+    --shm-size=4gb `
+    -it qwenllm/qwen3-asr:latest
+```
+如果遇到网络问题，可以尝试使用
+
+docker.1ms.run/qwenllm/qwen3-asr
+
+在成功下载并启动容器后，不会自动开启转录服务，查看本项目的
+
+\core\all_whisper_methods\qwenasrvl.py
+
+```
+#vim /usr/local/bin/qwenasrvl
+#chmod +x /usr/local/bin/qwenasrvl
+#qwenasrvl
+```
+按提示把文件写入并给予权限，最后运行。使用vllm框架，运行在容器的80端口上（主机的8700端口）。
 
 ## 最近更新
+2026年2月
+- 更新新的语言转录方式 Qwen3ASR
+（Qwen3-ASR-1.7B + Qwen3-ForcedAligner-0.6B）
+https://github.com/QwenLM/Qwen3-ASR
 
 2026年1月
 - 更新依赖 - 包括之前导致报错的旧版av
