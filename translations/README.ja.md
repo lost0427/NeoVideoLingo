@@ -69,6 +69,7 @@ docker.1ms.run/qwenllm/qwen3-asr
 
 ## 最近の更新
 2026年2月
+- 翻訳および自動翻訳ツールの最適化、最初のステップに戻るボタンを追加
 - 新しい言語転写方式 Qwen3ASR への更新
 （Qwen3-ASR-1.7B + Qwen3-ForcedAligner-0.6B）
 https://github.com/QwenLM/Qwen3-ASR

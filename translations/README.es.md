@@ -69,6 +69,7 @@ Siga las indicaciones para escribir el archivo y otorgar permisos, luego ejecút
 
 ## Actualizaciones recientes
 Febrero 2026
+- Optimización de la traducción y herramientas de traducción automática, añadido botón para reiniciar al primer paso
 - Actualización del nuevo método de transcripción de idiomas Qwen3ASR
 (Qwen3-ASR-1.7B + Qwen3-ForcedAligner-0.6B)
 https://github.com/QwenLM/Qwen3-ASR
