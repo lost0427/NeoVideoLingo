@@ -117,7 +117,8 @@
     "Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier": "音声活動検出の終了しきい値 - 範囲: 0〜1、値が低いほど弱い信号を検出、高いほど早く終了",
     "🔄 Fetch Available Models": "🔄 利用可能なモデルを取得",
     "Found {count} models": "{count} 個のモデルが見つかりました",
-    "📋 利用可能なモデル": "📋 利用可能なモデル",
-    "転写方法": "転写方法",
-    "転写エンジンを選択: whisperX、Parakeet、またはQwenASR": "転写エンジンを選択: whisperX、Parakeet、またはQwenASR"
+    "📋 Available Models": "📋 利用可能なモデル",
+    "Transcription Method": "転写方法",
+    "Select the transcription engine: whisperX, Parakeet, or QwenASR": "転写エンジンを選択: whisperX、Parakeet、またはQwenASR",
+    "Reset to Step A": "ステップAへリセット"
 }

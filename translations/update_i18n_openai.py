@@ -60,9 +60,14 @@ def save_json(filename, data):
 def translate_batch(texts_dict, target_lang):
     if not texts_dict: return {}
     
+    # 使用数字索引作为 key 发送给 AI，防止 AI 将英文 key 也翻译成目标语言
+    original_keys = list(texts_dict.keys())
+    indexed_dict = {str(i): texts_dict[k] for i, k in enumerate(original_keys)}
+    
     prompt = (
         f"You are a professional translator. Translate the following JSON values from English to {target_lang}. "
-        "Keep the keys exactly the same. Return ONLY the translated JSON object without any explanation."
+        "The keys are numeric indices — keep them exactly the same. "
+        "Return ONLY the translated JSON object without any explanation."
     )
     
     try:
@@ -70,11 +75,21 @@ def translate_batch(texts_dict, target_lang):
             model=MODEL,
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that outputs only valid JSON."},
-                {"role": "user", "content": f"{prompt}\n\nJSON: {json.dumps(texts_dict)}"}
+                {"role": "user", "content": f"{prompt}\n\nJSON: {json.dumps(indexed_dict, ensure_ascii=False)}"}
             ],
             response_format={ "type": "json_object" }
         )
-        return json.loads(response.choices[0].message.content)
+        translated_indexed = json.loads(response.choices[0].message.content)
+        # 将数字索引映射回原始英文 key
+        result = {}
+        for i, key in enumerate(original_keys):
+            idx = str(i)
+            if idx in translated_indexed:
+                result[key] = translated_indexed[idx]
+            else:
+                print(f"  ⚠️ 翻译结果中缺少索引 {idx} (key: {key})，使用原始英文值")
+                result[key] = texts_dict[key]
+        return result
     except Exception as e:
         print(f"❌ 翻译失败 ({target_lang}): {e}")
         return {}

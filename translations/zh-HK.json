@@ -119,5 +119,6 @@
     "Found {count} models": "發現 {count} 個模型",
     "📋 Available Models": "📋 可用模型",
     "Transcription Method": "轉錄方法",
-    "Select the transcription engine: whisperX, Parakeet, or QwenASR": "選擇轉錄引擎：whisperX、Parakeet 或 QwenASR"
+    "Select the transcription engine: whisperX, Parakeet, or QwenASR": "選擇轉錄引擎：whisperX、Parakeet 或 QwenASR",
+    "Reset to Step A": "重置到步驟A"
 }

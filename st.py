@@ -41,8 +41,24 @@ def text_processing_section():
                 st.video(SUB_VIDEO)
             download_subtitle_zip_button(text=t("Download All Srt Files"))
             
-            if st.button(t("Archive to 'history'"), key="cleanup_in_text_processing"):
-                cleanup()
+            if st.button(t("Reset to Step A"), key="back_in_text_processing"):
+                if os.path.exists(OUTPUT_DIR):
+                    for item in os.listdir(OUTPUT_DIR):
+                        item_path = os.path.join(OUTPUT_DIR, item)
+                        if os.path.isdir(item_path):
+                            shutil.rmtree(item_path)
+                        elif item.endswith(".srt"):
+                            os.remove(item_path)
+                    sub_video = os.path.join(OUTPUT_DIR, "output_sub.mp4")
+                    if os.path.exists(sub_video):
+                        os.remove(sub_video)
+                st.rerun()
+            
+            if st.button(t("Delete and Reselect"), key="delete_video_button_text"):
+                os.remove(video_file)
+                if os.path.exists(OUTPUT_DIR):
+                    shutil.rmtree(OUTPUT_DIR)
+                sleep(1)
                 st.rerun()
             return True
 
@@ -91,8 +107,14 @@ def audio_processing_section():
             if st.button(t("Delete dubbing files"), key="delete_dubbing_files"):
                 delete_dubbing_files()
                 st.rerun()
-            if st.button(t("Archive to 'history'"), key="cleanup_in_audio_processing"):
-                cleanup()
+            # if st.button(t("Archive to 'history'"), key="cleanup_in_audio_processing"):
+            #     cleanup()
+            #     st.rerun()
+            if st.button(t("Delete and Reselect"), key="delete_video_button_audio"):
+                os.remove(video_file)
+                if os.path.exists(OUTPUT_DIR):
+                    shutil.rmtree(OUTPUT_DIR)
+                sleep(1)
                 st.rerun()
 
 def process_audio():
@@ -128,6 +150,7 @@ def main():
     username = st.session_state.get('username')
 
     if authentication_status:
+        st.session_state.display_language = load_key("display_language", username=username)
         base_dir = os.path.dirname(os.path.abspath(__file__))
         user_dir = os.path.join(base_dir, "users", username)
         os.makedirs(user_dir, exist_ok=True)

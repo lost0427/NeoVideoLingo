@@ -119,5 +119,6 @@
     "Found {count} models": "Trouvé {count} modèles",
     "📋 Available Models": "📋 Modèles disponibles",
     "Transcription Method": "Méthode de transcription",
-    "Select the transcription engine: whisperX, Parakeet, or QwenASR": "Sélectionnez le moteur de transcription : whisperX, Parakeet ou QwenASR"
+    "Select the transcription engine: whisperX, Parakeet, or QwenASR": "Sélectionnez le moteur de transcription : whisperX, Parakeet ou QwenASR",
+    "Reset to Step A": "Réinitialiser à l'étape A"
 }
