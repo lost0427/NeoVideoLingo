@@ -120,5 +120,6 @@
     "📋 Available Models": "📋 可用模型",
     "Transcription Method": "转录方法",
     "Select the transcription engine: whisperX, Parakeet, or QwenASR": "选择转录引擎：whisperX、Parakeet 或 QwenASR",
-    "Reset to Step A": "重置到步骤A"
+    "Reset to Step A": "重置到步骤A",
+    "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "在core/all_tts_functions/custom_tts.py中配置您的自定义TTS"
 }

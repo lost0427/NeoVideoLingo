@@ -120,5 +120,6 @@
     "📋 Available Models": "📋 Доступные модели",
     "Transcription Method": "Метод транскрипции",
     "Select the transcription engine: whisperX, Parakeet, or QwenASR": "Выберите движок транскрипции: whisperX, Parakeet или QwenASR",
-    "Reset to Step A": "Сброс к шагу A"
+    "Reset to Step A": "Сброс к шагу A",
+    "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "Настройте ваш собственный TTS в core/all_tts_functions/custom_tts.py"
 }

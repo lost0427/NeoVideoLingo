@@ -135,50 +135,18 @@ def page_setting():
             config_input("QwenASR API", "qwenasr_url")
 
     with st.expander(t("Dubbing Settings"), expanded=True):
-        tts_methods = ["azure_tts", "openai_tts", "fish_tts", "sf_fish_tts", "edge_tts", "gpt_sovits", "custom_tts", "sf_cosyvoice2"]
-        select_tts = st.selectbox(t("TTS Method"), options=tts_methods, index=tts_methods.index(load_key("tts_method", username=username)))
+        tts_methods = ["edge_tts", "gpt_sovits", "custom_tts"]
+        current_tts_method = load_key("tts_method", username=username)
+        if current_tts_method not in tts_methods:
+            current_tts_method = "edge_tts"
+            update_key("tts_method", current_tts_method, username=username)
+        select_tts = st.selectbox(t("TTS Method"), options=tts_methods, index=tts_methods.index(current_tts_method))
         if select_tts != load_key("tts_method", username=username):
             update_key("tts_method", select_tts, username=username)
             st.rerun()
 
         # sub settings for each tts method
-        if select_tts == "sf_fish_tts":
-            config_input(t("SiliconFlow API Key"), "sf_fish_tts.api_key")
-            
-            # Add mode selection dropdown
-            mode_options = {
-                "preset": t("Preset"),
-                "custom": t("Refer_stable"),
-                "dynamic": t("Refer_dynamic")
-            }
-            selected_mode = st.selectbox(
-                t("Mode Selection"),
-                options=list(mode_options.keys()),
-                format_func=lambda x: mode_options[x],
-                index=list(mode_options.keys()).index(load_key("sf_fish_tts.mode", username=username)) if load_key("sf_fish_tts.mode", username=username) in mode_options.keys() else 0
-            )
-            if selected_mode != load_key("sf_fish_tts.mode", username=username):
-                update_key("sf_fish_tts.mode", selected_mode, username=username)
-                st.rerun()
-            if selected_mode == "preset":
-                config_input("Voice", "sf_fish_tts.voice")
-
-        elif select_tts == "openai_tts":
-            config_input("302ai API", "openai_tts.api_key")
-            config_input(t("OpenAI Voice"), "openai_tts.voice")
-
-        elif select_tts == "fish_tts":
-            config_input("302ai API", "fish_tts.api_key")
-            fish_tts_character = st.selectbox(t("Fish TTS Character"), options=list(load_key("fish_tts.character_id_dict", username=username).keys()), index=list(load_key("fish_tts.character_id_dict", username=username).keys()).index(load_key("fish_tts.character", username=username)))
-            if fish_tts_character != load_key("fish_tts.character", username=username):
-                update_key("fish_tts.character", fish_tts_character, username=username)
-                st.rerun()
-
-        elif select_tts == "azure_tts":
-            config_input("302ai API", "azure_tts.api_key")
-            config_input(t("Azure Voice"), "azure_tts.voice")
-        
-        elif select_tts == "gpt_sovits":
+        if select_tts == "gpt_sovits":
             st.info(t("Please refer to Github homepage for GPT_SoVITS configuration"))
             config_input(t("SoVITS Character"), "gpt_sovits.character")
             
@@ -197,8 +165,8 @@ def page_setting():
         elif select_tts == "edge_tts":
             config_input(t("Edge TTS Voice"), "edge_tts.voice")
 
-        elif select_tts == "sf_cosyvoice2":
-            config_input(t("SiliconFlow API Key"), "sf_cosyvoice2.api_key")
+        elif select_tts == "custom_tts":
+            st.info(t("Configure your custom TTS in core/all_tts_functions/custom_tts.py"))
         
 def check_api():
     try:

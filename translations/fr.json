@@ -120,5 +120,6 @@
     "📋 Available Models": "📋 Modèles disponibles",
     "Transcription Method": "Méthode de transcription",
     "Select the transcription engine: whisperX, Parakeet, or QwenASR": "Sélectionnez le moteur de transcription : whisperX, Parakeet ou QwenASR",
-    "Reset to Step A": "Réinitialiser à l'étape A"
+    "Reset to Step A": "Réinitialiser à l'étape A",
+    "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "Configurez votre TTS personnalisé dans core/all_tts_functions/custom_tts.py"
 }

@@ -7,15 +7,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 from core.config_utils import load_key
 from core.all_whisper_methods.audio_preprocess import get_audio_duration
 from core.all_tts_functions.gpt_sovits_tts import gpt_sovits_tts_for_videolingo
-from core.all_tts_functions.sf_fishtts import siliconflow_fish_tts_for_videolingo
-from core.all_tts_functions.openai_tts import openai_tts
-from core.all_tts_functions.fish_tts import fish_tts
-from core.all_tts_functions.azure_tts import azure_tts
 from core.all_tts_functions.edge_tts import edge_tts
-from core.all_tts_functions.sf_cosyvoice2 import cosyvoice_tts_for_videolingo
 from core.all_tts_functions.custom_tts import custom_tts
 from core.ask_gpt import ask_gpt
 from core.prompts_storage import get_correct_text_prompt
+
+SUPPORTED_TTS_METHODS = {"edge_tts", "gpt_sovits", "custom_tts"}
 
 def clean_text_for_tts(text):
     """Remove problematic characters for TTS"""
@@ -40,6 +37,10 @@ def tts_main(text, save_as, number, task_df):
     
     print(f"Generating <{text}...>")
     TTS_METHOD = load_key("tts_method")
+    if TTS_METHOD not in SUPPORTED_TTS_METHODS:
+        raise ValueError(
+            f"Unsupported tts_method '{TTS_METHOD}'. Supported methods: {sorted(SUPPORTED_TTS_METHODS)}"
+        )
     
     max_retries = 3
     for attempt in range(max_retries):
@@ -48,22 +49,12 @@ def tts_main(text, save_as, number, task_df):
                 print("Asking GPT to correct text...")
                 correct_text = ask_gpt(get_correct_text_prompt(text),log_title='tts_correct_text')
                 text = correct_text['text']
-            if TTS_METHOD == 'openai_tts':
-                openai_tts(text, save_as)
-            elif TTS_METHOD == 'gpt_sovits':
+            if TTS_METHOD == 'gpt_sovits':
                 gpt_sovits_tts_for_videolingo(text, save_as, number, task_df)
-            elif TTS_METHOD == 'fish_tts':
-                fish_tts(text, save_as)
-            elif TTS_METHOD == 'azure_tts':
-                azure_tts(text, save_as)
-            elif TTS_METHOD == 'sf_fish_tts':
-                siliconflow_fish_tts_for_videolingo(text, save_as, number, task_df)
             elif TTS_METHOD == 'edge_tts':
                 edge_tts(text, save_as)
             elif TTS_METHOD == 'custom_tts':
                 custom_tts(text, save_as)
-            elif TTS_METHOD == 'sf_cosyvoice2':
-                cosyvoice_tts_for_videolingo(text, save_as, number, task_df)
             
             # Check generated audio duration
             duration = get_audio_duration(save_as)

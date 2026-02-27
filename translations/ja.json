@@ -120,5 +120,6 @@
     "📋 Available Models": "📋 利用可能なモデル",
     "Transcription Method": "転写方法",
     "Select the transcription engine: whisperX, Parakeet, or QwenASR": "転写エンジンを選択: whisperX、Parakeet、またはQwenASR",
-    "Reset to Step A": "ステップAへリセット"
+    "Reset to Step A": "ステップAへリセット",
+    "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "カスタムTTSをcore/all_tts_functions/custom_tts.pyで設定する"
 }
