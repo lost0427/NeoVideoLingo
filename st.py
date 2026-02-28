@@ -17,6 +17,7 @@ st.set_page_config(page_title="VideoLingo", page_icon="docs/logo.svg")
 
 def text_processing_section():
     username = st.session_state.get('username')
+    OUTPUT_DIR = os.path.join("users", username, "output")
     SUB_VIDEO = os.path.join("users", username, "output", "output_sub.mp4")
     st.header(t("b. Translate and Generate Subtitles"))
     with st.container(border=True):
@@ -55,7 +56,12 @@ def text_processing_section():
                 st.rerun()
             
             if st.button(t("Delete and Reselect"), key="delete_video_button_text"):
-                os.remove(video_file)
+                try:
+                    video_file = step1_ytdlp.find_video_files(username=username)
+                    if os.path.exists(video_file):
+                        os.remove(video_file)
+                except Exception:
+                    pass
                 if os.path.exists(OUTPUT_DIR):
                     shutil.rmtree(OUTPUT_DIR)
                 sleep(1)
@@ -84,6 +90,7 @@ def process_text():
 
 def audio_processing_section():
     username = st.session_state.get('username')
+    OUTPUT_DIR = os.path.join("users", username, "output")
     DUB_VIDEO = os.path.join("users", username, "output", "output_dub.mp4")
     st.header(t("c. Dubbing"))
     with st.container(border=True):
@@ -111,7 +118,12 @@ def audio_processing_section():
             #     cleanup()
             #     st.rerun()
             if st.button(t("Delete and Reselect"), key="delete_video_button_audio"):
-                os.remove(video_file)
+                try:
+                    video_file = step1_ytdlp.find_video_files(username=username)
+                    if os.path.exists(video_file):
+                        os.remove(video_file)
+                except Exception:
+                    pass
                 if os.path.exists(OUTPUT_DIR):
                     shutil.rmtree(OUTPUT_DIR)
                 sleep(1)
