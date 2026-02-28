@@ -7,7 +7,7 @@ import socket
 import time
 import requests
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from core.config_utils import load_key
+from core.config_utils import config
 
 def check_lang(text_lang, prompt_lang):
     # only support zh and en
@@ -56,16 +56,17 @@ def gpt_sovits_tts(text, text_lang, save_path, ref_audio_path, prompt_lang, prom
         rprint(f"[bold red]TTS request failed, status code:[/bold red] {response.status_code}")
         return False
 
-def gpt_sovits_tts_for_videolingo(text, save_as, number, task_df):
-    start_gpt_sovits_server()
-    TARGET_LANGUAGE = load_key("target_language")
-    WHISPER_LANGUAGE = load_key("whisper.language")
-    sovits_set = load_key("gpt_sovits")
-    DUBBING_CHARACTER = sovits_set["character"]
-    REFER_MODE = sovits_set["refer_mode"]
+def gpt_sovits_tts_for_videolingo(text, save_as, number, task_df, username=None):
+    start_gpt_sovits_server(username=username)
+    active_config = config.for_user(username)
+    TARGET_LANGUAGE = active_config.target_language
+    WHISPER_LANGUAGE = active_config.whisper.language
+    sovits_set = active_config.gpt_sovits
+    DUBBING_CHARACTER = sovits_set.character
+    REFER_MODE = sovits_set.refer_mode
 
     current_dir = Path.cwd()
-    prompt_lang = load_key("whisper.detected_language") if WHISPER_LANGUAGE == 'auto' else WHISPER_LANGUAGE
+    prompt_lang = active_config.whisper.detected_language if WHISPER_LANGUAGE == 'auto' else WHISPER_LANGUAGE
     prompt_text = task_df.loc[task_df['number'] == number, 'origin'].values[0]
 
     if REFER_MODE == 1:
@@ -125,7 +126,7 @@ def find_and_check_config_path(dubbing_character):
 
     return gpt_sovits_dir, config_path
 
-def start_gpt_sovits_server():
+def start_gpt_sovits_server(username=None):
     current_dir = Path(__file__).resolve().parent.parent.parent
     # Check if port 9880 is already in use
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -146,7 +147,7 @@ def start_gpt_sovits_server():
   • 启动过程中出现 `404 not found` 警告是正常的，请耐心等待[/bold red]""")
     
     # Find and check config path
-    gpt_sovits_dir, config_path = find_and_check_config_path(load_key("gpt_sovits.character"))
+    gpt_sovits_dir, config_path = find_and_check_config_path(config.for_user(username).gpt_sovits.character)
 
     # Change to the GPT-SoVITS-v2 directory
     os.chdir(gpt_sovits_dir)

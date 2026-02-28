@@ -3,7 +3,7 @@ import pandas as pd
 from typing import Dict, List, Tuple
 from rich import print
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from core.config_utils import update_key
+from core.config_utils import config
 import streamlit as st
 
 
@@ -166,4 +166,6 @@ def save_results(df: pd.DataFrame):
     print(f"📊 Excel file saved to {CLEANED_CHUNKS_EXCEL_PATH}")
 
 def save_language(language: str):
-    update_key("whisper.detected_language", language)
+    username = st.session_state.get('username')
+    config.set_path('whisper.detected_language', language, username=username)
+

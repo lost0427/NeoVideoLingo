@@ -4,7 +4,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from rich import print as rprint
 import subprocess
 
-from core.config_utils import load_key
+from core.config_utils import config
 from core.all_whisper_methods.roformer_vl import roformer_main
 from core.all_whisper_methods.audio_preprocess import process_transcription, convert_video_to_audio, split_audio, save_results, compress_audio
 from core.step1_ytdlp import find_video_files
@@ -20,7 +20,7 @@ def enhance_vocals(vocals_ratio=2.50):
     VOCAL_AUDIO_FILE = os.path.join(AUDIO_DIR, "vocal.mp3")
 
     """Enhance vocals audio volume"""
-    if not load_key("roformer",username=username):
+    if not config.for_user(username).roformer:
         return RAW_AUDIO_FILE
         
     try:
@@ -53,11 +53,11 @@ def transcribe():
     convert_video_to_audio(video_file)
 
     # step1 roformer vocal separation:
-    if load_key("roformer", username=username):
+    if config.for_user(username).roformer:
         roformer_main()
     
     # step2 Compress audio
-    choose_audio = enhance_vocals() if load_key("roformer", username=username) else RAW_AUDIO_FILE
+    choose_audio = enhance_vocals() if config.for_user(username).roformer else RAW_AUDIO_FILE
     
     base_path = os.path.join("users", username, "output", "audio")
     WHISPER_FILE = os.path.join(base_path, "for_whisper.mp3")
@@ -66,12 +66,12 @@ def transcribe():
     
     # step4 Transcribe audio
     all_results = []
-    transcription_method = load_key("transcription_method", username=username)
+    transcription_method = config.for_user(username).transcription_method
 
     if transcription_method == "parakeet":
         from core.all_whisper_methods.parakeet import parakeet_transcribe as para
         rprint("[cyan]🎤 Transcribing audio with Parakeet...[/cyan]")
-        target_len = int(load_key("target_len"))
+        target_len = int(config.for_user(username).target_len)
         segments = split_audio(whisper_audio, target_len=target_len)
         for start, end in segments:
             result = para(whisper_audio, username, start, end)
@@ -80,14 +80,14 @@ def transcribe():
     elif transcription_method == "qwenasr":
         from core.all_whisper_methods.qwenasr import qwenasr_transcribe as qwen
         rprint("[cyan]🎤 Transcribing audio with QwenASR...[/cyan]")
-        target_len = int(load_key("target_len"))
+        target_len = int(config.for_user(username).target_len)
         segments = split_audio(whisper_audio, target_len=target_len)
         for start, end in segments:
             result = qwen(whisper_audio, username, start, end)
             all_results.append(result)
 
     else:  # whisperX (default)
-        if load_key("whisper.runtime", username=username) == "local":
+        if config.for_user(username).whisper.runtime == "local":
             from core.all_whisper_methods.whisperX_local import transcribe_audio as ts
             rprint("[cyan]🎤 Transcribing audio with local model...[/cyan]")
         else:
@@ -95,7 +95,7 @@ def transcribe():
             rprint("[cyan]🎤 Transcribing audio with 302 API...[/cyan]")
         segments = split_audio(whisper_audio)
         for start, end in segments:
-            result = ts(whisper_audio, start, end)
+            result = ts(whisper_audio, start, end, username=username)
             all_results.append(result)
     
     # step5 Combine results

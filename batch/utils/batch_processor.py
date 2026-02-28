@@ -3,7 +3,7 @@ import gc
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from batch.utils.settings_check import check_settings
 from batch.utils.video_processor import process_video
-from core.config_utils import load_key, update_key
+from core.config_utils import config
 import pandas as pd
 from rich.console import Console
 from rich.panel import Panel
@@ -13,13 +13,13 @@ import shutil
 console = Console()
 
 def record_and_update_config(source_language, target_language):
-    original_source_lang = load_key('whisper.language')
-    original_target_lang = load_key('target_language')
+    original_source_lang = config.whisper.language
+    original_target_lang = config.target_language
     
     if source_language and not pd.isna(source_language):
-        update_key('whisper.language', source_language)
+        config.set_path('whisper.language', source_language)
     if target_language and not pd.isna(target_language):
-        update_key('target_language', target_language)
+        config.set_path('target_language', target_language)
     
     return original_source_lang, original_target_lang
 
@@ -79,8 +79,8 @@ def process_batch():
                 status_msg = f"Error: Unhandled exception - {str(e)}"
                 console.print(f"[bold red]Error processing {video_file}: {status_msg}")
             finally:
-                update_key('whisper.language', original_source_lang)
-                update_key('target_language', original_target_lang)
+                config.set_path('whisper.language', original_source_lang)
+                config.set_path('target_language', original_target_lang)
                 
                 df.at[index, 'Status'] = status_msg
                 df.to_excel('batch/tasks_setting.xlsx', index=False)

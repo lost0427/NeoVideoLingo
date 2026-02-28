@@ -1,13 +1,14 @@
 import pandas as pd
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from core.config_utils import load_key
+from core.config_utils import config
 from core.all_whisper_methods.audio_preprocess import get_audio_duration
 from core.step8_1_gen_audio_task import time_diff_seconds
 import datetime
 import re
 from core.all_tts_functions.estimate_duration import init_estimator, estimate_duration
 from rich import print as rprint
+import streamlit as st
 
 INPUT_EXCEL = "output/audio/tts_tasks.xlsx"
 OUTPUT_EXCEL = "output/audio/tts_tasks.xlsx"
@@ -18,7 +19,8 @@ AUDIO_FILE = 'output/audio/raw.mp3'
 ESTIMATOR = None
 
 def calc_if_too_fast(est_dur, tol_dur, duration, tolerance):
-    accept = load_key("speed_factor.accept") # Maximum acceptable speed factor
+    username = st.session_state.get('username')
+    accept = config.for_user(username).speed_factor.accept # Maximum acceptable speed factor
     if est_dur / accept > tol_dur:  # Even max speed factor cannot adapt
         return 2
     elif est_dur > tol_dur:  # Speed adjustment needed within acceptable range
@@ -65,7 +67,9 @@ def analyze_subtitle_timing_and_speed(df):
     global ESTIMATOR
     if ESTIMATOR is None:
         ESTIMATOR = init_estimator()
-    TOLERANCE = load_key("tolerance")
+    username = st.session_state.get('username')
+    active_config = config.for_user(username)
+    TOLERANCE = active_config.tolerance
     whole_dur = get_audio_duration(AUDIO_FILE)
     df['gap'] = 0.0  # Initialize gap column
     for i in range(len(df) - 1):
@@ -84,7 +88,7 @@ def analyze_subtitle_timing_and_speed(df):
     df['est_dur'] = df.apply(lambda x: estimate_duration(x['text'], ESTIMATOR), axis=1)
 
     ## Calculate speed indicators
-    accept = load_key("speed_factor.accept") # Maximum acceptable speed factor
+    accept = active_config.speed_factor.accept # Maximum acceptable speed factor
     def calc_if_too_fast(row):
         est_dur = row['est_dur']
         tol_dur = row['tol_dur']
@@ -105,8 +109,10 @@ def analyze_subtitle_timing_and_speed(df):
 
 def process_cutoffs(df):
     rprint("[✂️ Processing] Generating cutoff points...")
+    username = st.session_state.get('username')
+    tolerance = config.for_user(username).tolerance
     df['cut_off'] = 0  # Initialize cut_off column
-    df.loc[df['gap'] >= load_key("tolerance"), 'cut_off'] = 1  # Set to 1 when gap is greater than TOLERANCE
+    df.loc[df['gap'] >= tolerance, 'cut_off'] = 1  # Set to 1 when gap is greater than TOLERANCE
     idx = 0
     while idx < len(df):
         # Process marked split points

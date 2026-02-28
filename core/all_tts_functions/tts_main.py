@@ -2,9 +2,10 @@ import os, sys
 import re
 from rich import print as rprint
 from pydub import AudioSegment
+import streamlit as st
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from core.config_utils import load_key
+from core.config_utils import config
 from core.all_whisper_methods.audio_preprocess import get_audio_duration
 from core.all_tts_functions.gpt_sovits_tts import gpt_sovits_tts_for_videolingo
 from core.all_tts_functions.edge_tts import edge_tts
@@ -21,7 +22,7 @@ def clean_text_for_tts(text):
         text = text.replace(char, '')
     return text.strip()
 
-def tts_main(text, save_as, number, task_df):
+def tts_main(text, save_as, number, task_df, username=None):
     text = clean_text_for_tts(text)
     # Check if text is empty or single character, single character voiceovers are prone to bugs
     cleaned_text = re.sub(r'[^\w\s]', '', text).strip()
@@ -36,7 +37,9 @@ def tts_main(text, save_as, number, task_df):
         return
     
     print(f"Generating <{text}...>")
-    TTS_METHOD = load_key("tts_method")
+    if username is None:
+        username = st.session_state.get('username')
+    TTS_METHOD = config.for_user(username).tts_method
     if TTS_METHOD not in SUPPORTED_TTS_METHODS:
         raise ValueError(
             f"Unsupported tts_method '{TTS_METHOD}'. Supported methods: {sorted(SUPPORTED_TTS_METHODS)}"
@@ -47,12 +50,12 @@ def tts_main(text, save_as, number, task_df):
         try:
             if attempt >= max_retries - 1:
                 print("Asking GPT to correct text...")
-                correct_text = ask_gpt(get_correct_text_prompt(text),log_title='tts_correct_text')
+                correct_text = ask_gpt(get_correct_text_prompt(text), username=username, log_title='tts_correct_text')
                 text = correct_text['text']
             if TTS_METHOD == 'gpt_sovits':
-                gpt_sovits_tts_for_videolingo(text, save_as, number, task_df)
+                gpt_sovits_tts_for_videolingo(text, save_as, number, task_df, username=username)
             elif TTS_METHOD == 'edge_tts':
-                edge_tts(text, save_as)
+                edge_tts(text, save_as, username=username)
             elif TTS_METHOD == 'custom_tts':
                 custom_tts(text, save_as)
             

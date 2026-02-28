@@ -12,7 +12,7 @@ import threading
 from transformers import AutoModel
 import torch, librosa, soundfile
 import time
-from core.config_utils import load_key
+from core.config_utils import config
 
 # class PreloadedSeparator(Separator):
 #     def __init__(self, model: BagOfModels, shifts: int = 1, overlap: float = 0.25,
@@ -41,7 +41,7 @@ def roformer_main():
         
         console.print("🤖 Loading <BS-RoFormer> model...")
         
-        MODEL_DIR = load_key("model_dir")
+        MODEL_DIR = config.model_dir
         if MODEL_DIR:
             os.makedirs(MODEL_DIR, exist_ok=True)
             console.print(f"📂 Model cache directory set to: {MODEL_DIR}")

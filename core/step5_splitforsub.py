@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.step3_2_splitbymeaning import split_sentence
 from core.ask_gpt import ask_gpt
 from core.prompts_storage import get_align_prompt
-from core.config_utils import load_key, get_joiner
+from core.config_utils import config, get_joiner
 from rich.panel import Panel
 from rich.console import Console
 from rich.table import Table
@@ -52,8 +52,8 @@ def align_subs(src_sub: str, tr_sub: str, src_part: str) -> Tuple[List[str], Lis
     src_parts = src_part.split('\n')
     tr_parts = [item[f'target_part_{i+1}'].strip() for i, item in enumerate(align_data)]
     
-    whisper_language = load_key("whisper.language", username=username)
-    language = load_key("whisper.detected_language", username=username) if whisper_language == 'auto' else whisper_language
+    whisper_language = config.for_user(username).whisper.language
+    language = config.for_user(username).whisper.detected_language if whisper_language == 'auto' else whisper_language
     joiner = get_joiner(language)
     tr_remerged = joiner.join(tr_parts)
     
@@ -69,9 +69,9 @@ def align_subs(src_sub: str, tr_sub: str, src_part: str) -> Tuple[List[str], Lis
 
 def split_align_subs(src_lines: List[str], tr_lines: List[str]) -> Tuple[List[str], List[str], List[str]]:
     username = st.session_state.get('username')
-    subtitle_set = load_key("subtitle", username=username)
-    MAX_SUB_LENGTH = subtitle_set["max_length"]
-    TARGET_SUB_MULTIPLIER = subtitle_set["target_multiplier"]
+    subtitle_set = config.for_user(username).subtitle
+    MAX_SUB_LENGTH = subtitle_set.max_length
+    TARGET_SUB_MULTIPLIER = subtitle_set.target_multiplier
     remerged_tr_lines = tr_lines.copy()
     
     to_split = []
@@ -93,7 +93,7 @@ def split_align_subs(src_lines: List[str], tr_lines: List[str]) -> Tuple[List[st
         tr_lines[i] = tr_parts
         remerged_tr_lines[i] = tr_remerged
     
-    with concurrent.futures.ThreadPoolExecutor(max_workers=load_key("max_workers", username=username)) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=config.for_user(username).max_workers) as executor:
         executor.map(process, to_split)
     
     # Flatten `src_lines` and `tr_lines`
@@ -111,9 +111,9 @@ def split_for_sub_main():
     src = df['Source'].tolist()
     trans = df['Translation'].tolist()
     
-    subtitle_set = load_key("subtitle", username=username)
-    MAX_SUB_LENGTH = subtitle_set["max_length"]
-    TARGET_SUB_MULTIPLIER = subtitle_set["target_multiplier"]
+    subtitle_set = config.for_user(username).subtitle
+    MAX_SUB_LENGTH = subtitle_set.max_length
+    TARGET_SUB_MULTIPLIER = subtitle_set.target_multiplier
     
     for attempt in range(3):  # 使用固定的3次重试
         console.print(Panel(f"🔄 Split attempt {attempt + 1}", expand=False))

@@ -29,5 +29,5 @@ rich
 syllables
 pypinyin
 g2p-en
-
+pydantic==2.12.5
 

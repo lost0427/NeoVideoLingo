@@ -2,7 +2,7 @@ from pathlib import Path
 import edge_tts
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-from core.config_utils import load_key
+from core.config_utils import config
 
 # Available voices can be listed using edge-tts --list-voices command
 # Common English voices:
@@ -13,10 +13,10 @@ from core.config_utils import load_key
 # zh-CN-XiaoxiaoNeural - Female
 # zh-CN-YunxiNeural - Male
 # zh-CN-XiaoyiNeural - Female
-def edge_tts(text, save_path):
+def edge_tts(text, save_path, username=None):
     # Load settings from config file
-    edge_set = load_key("edge_tts")
-    voice = edge_set.get("voice", "en-US-JennyNeural")
+    edge_set = config.for_user(username).edge_tts
+    voice = edge_set.voice or "en-US-JennyNeural"
     
     # Create output directory if it doesn't exist
     speech_file_path = Path(save_path)

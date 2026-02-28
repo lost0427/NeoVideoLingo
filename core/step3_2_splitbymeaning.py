@@ -6,7 +6,7 @@ from core.prompts_storage import get_split_prompt
 from difflib import SequenceMatcher
 import math
 from core.spacy_utils.load_nlp_model import init_nlp
-from core.config_utils import load_key, get_joiner
+from core.config_utils import config, get_joiner
 from rich.console import Console
 from rich.table import Table
 import streamlit as st
@@ -22,8 +22,8 @@ def find_split_positions(original, modified):
     split_positions = []
     parts = modified.split('[br]')
     start = 0
-    whisper_language = load_key("whisper.language", username=username)
-    language = load_key("whisper.detected_language", username=username) if whisper_language == 'auto' else whisper_language
+    whisper_language = config.for_user(username).whisper.language
+    language = config.for_user(username).whisper.detected_language if whisper_language == 'auto' else whisper_language
     joiner = get_joiner(language)
 
     for i in range(len(parts) - 1):
@@ -123,7 +123,7 @@ def split_sentences_by_meaning():
     nlp = init_nlp()
     # 🔄 process sentences multiple times to ensure all are split
     for retry_attempt in range(3):
-        sentences = parallel_split_sentences(sentences, max_length=load_key("max_split_length", username=username), max_workers=load_key("max_workers", username=username), nlp=nlp, retry_attempt=retry_attempt)
+        sentences = parallel_split_sentences(sentences, max_length=config.for_user(username).max_split_length, max_workers=config.for_user(username).max_workers, nlp=nlp, retry_attempt=retry_attempt)
 
     # 💾 save results
     username = st.session_state.get('username')

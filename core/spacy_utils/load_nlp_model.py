@@ -3,13 +3,13 @@ import spacy
 from spacy.cli import download
 from rich import print
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from core.config_utils import load_key
+from core.config_utils import config
 import streamlit as st
 
 
 def get_spacy_model(language: str):
     username = st.session_state.get('username')
-    SPACY_MODEL_MAP = load_key("spacy_model_map", username=username)
+    SPACY_MODEL_MAP = config.for_user(username).spacy_model_map
     
     model = SPACY_MODEL_MAP.get(language.lower(), "en_core_web_sm")
     if language not in SPACY_MODEL_MAP:
@@ -18,7 +18,9 @@ def get_spacy_model(language: str):
 
 def init_nlp():
     try:
-        language = "en" if load_key("whisper.language") == "en" else load_key("whisper.detected_language")
+        username = st.session_state.get('username')
+        active_config = config.for_user(username)
+        language = "en" if active_config.whisper.language == "en" else active_config.whisper.detected_language
         model = get_spacy_model(language)
         print(f"[blue]⏳ Loading NLP Spacy model: <{model}> ...[/blue]")
         try:

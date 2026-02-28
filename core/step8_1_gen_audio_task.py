@@ -8,7 +8,7 @@ from core.prompts_storage import get_subtitle_trim_prompt
 from rich import print as rprint
 from rich.panel import Panel
 from rich.console import Console
-from core.config_utils import load_key  
+from core.config_utils import config  
 from core.all_tts_functions.estimate_duration import init_estimator, estimate_duration
 import streamlit as st
 
@@ -20,11 +20,11 @@ ESTIMATOR = None
 
 def check_len_then_trim(text, duration):
     username = st.session_state.get('username')
-    speed_factor = load_key("speed_factor", username=username)
+    speed_factor = config.for_user(username).speed_factor
     global ESTIMATOR
     if ESTIMATOR is None:
         ESTIMATOR = init_estimator()
-    estimated_duration = estimate_duration(text, ESTIMATOR) / speed_factor['max']
+    estimated_duration = estimate_duration(text, ESTIMATOR) / speed_factor.max
     
     console.print(f"Subtitle text: {text}, "
                   f"[bold green]Estimated reading duration: {estimated_duration:.2f} seconds[/bold green]")
@@ -109,7 +109,7 @@ def process_srt():
     df = pd.DataFrame(subtitles)
     
     i = 0
-    MIN_SUB_DUR = load_key("min_subtitle_duration")
+    MIN_SUB_DUR = config.for_user(username).min_subtitle_duration
     while i < len(df):
         today = datetime.date.today()
         if df.loc[i, 'duration'] < MIN_SUB_DUR:

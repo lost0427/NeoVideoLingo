@@ -2,7 +2,7 @@ import os, sys, json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.ask_gpt import ask_gpt
 from core.prompts_storage import get_summary_prompt
-from core.config_utils import load_key
+from core.config_utils import config
 import pandas as pd
 import streamlit as st
 
@@ -16,7 +16,7 @@ def combine_chunks():
         sentences = file.readlines()
     cleaned_sentences = [line.strip() for line in sentences]
     combined_text = ' '.join(cleaned_sentences)
-    return combined_text[:load_key('summary_length', username=username)]  #! Return only the first x characters
+    return combined_text[:config.for_user(username).summary_length]  #! Return only the first x characters
 
 def search_things_to_note_in_prompt(sentence, username):
     """Search for terms to note in the given sentence"""

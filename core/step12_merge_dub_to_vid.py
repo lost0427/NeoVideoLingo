@@ -9,7 +9,7 @@ from rich import print as rprint
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.step7_merge_sub_to_vid import check_gpu_available
-from core.config_utils import load_key
+from core.config_utils import config
 from core.step1_ytdlp import find_video_files
 import streamlit as st
 
@@ -37,8 +37,9 @@ def merge_video_audio():
     DUB_VIDEO = os.path.join("users", username, "output", "output_dub.mp4")
     DUB_SUB_FILE = os.path.join("users", username, "output", "dub.srt")
     DUB_AUDIO = os.path.join("users", username, "output", "dub.mp3")
+    active_config = config.for_user(username)
 
-    if not load_key("burn_subtitles"):
+    if not active_config.burn_subtitles:
         rprint("[bold yellow]Warning: A 0-second black video will be generated as a placeholder as subtitles are not burned in.[/bold yellow]")
 
         # Create a black frame
@@ -52,7 +53,7 @@ def merge_video_audio():
         return
 
     # Merge video and audio with translated subtitles
-    dub_volume = load_key("dub_volume")
+    dub_volume = active_config.dub_volume
     video = cv2.VideoCapture(VIDEO_FILE)
     TARGET_WIDTH = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
     TARGET_HEIGHT = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))

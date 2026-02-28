@@ -1,7 +1,7 @@
 import requests
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from core.config_utils import load_key
+from core.config_utils import config
 from rich import print as rprint
 import time
 import json
@@ -9,14 +9,15 @@ import tempfile
 import subprocess
 
 OUTPUT_LOG_DIR = "output/log"
-def transcribe_audio_302(audio_path: str, start: float = None, end: float = None):
+def transcribe_audio_302(audio_path: str, start: float = None, end: float = None, username: str = None):
     os.makedirs(OUTPUT_LOG_DIR, exist_ok=True)
     LOG_FILE = f"{OUTPUT_LOG_DIR}/whisperx302.json"
     if os.path.exists(LOG_FILE):
         with open(LOG_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
         
-    WHISPER_LANGUAGE = load_key("whisper.language")
+    active_config = config.for_user(username)
+    WHISPER_LANGUAGE = active_config.whisper.language
     url = "https://api.302.ai/302/whisperx"
     
     # 如果指定了开始和结束时间，创建临时音频片段
@@ -46,7 +47,7 @@ def transcribe_audio_302(audio_path: str, start: float = None, end: float = None
     ]
     
     headers = {
-        'Authorization': f'Bearer {load_key("whisper.whisperX_302_api_key")}'
+        'Authorization': f'Bearer {active_config.whisper.whisperX_302_api_key}'
     }
 
     # 使用 with 语句确保文件正确关闭

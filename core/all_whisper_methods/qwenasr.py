@@ -1,4 +1,4 @@
-from core.config_utils import load_key
+from core.config_utils import config
 import requests
 import os
 import subprocess
@@ -29,7 +29,7 @@ def qwenasr_transcribe(
     """
     with transcription_lock:
         print("qwenasr")
-        qwenasr_url = load_key("qwenasr_url", username=username)
+        qwenasr_url = config.for_user(username).qwenasr_url
         qwenasr_url = urljoin(qwenasr_url, 'transcribe')
 
         if not os.path.exists(audio_file):

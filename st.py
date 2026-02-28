@@ -4,7 +4,7 @@ import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
 from st_components.imports_and_utils import *
-from core.config_utils import load_key
+from core.config_utils import config
 
 # SET PATH
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +37,7 @@ def text_processing_section():
                 process_text()
                 st.rerun()
         else:
-            if load_key("burn_subtitles", username=username):
+            if config.for_user(username).burn_subtitles:
                 st.video(SUB_VIDEO)
             download_subtitle_zip_button(text=t("Download All Srt Files"))
             
@@ -70,7 +70,7 @@ def process_text():
         step3_2_splitbymeaning.split_sentences_by_meaning()
     with st.spinner(t("Summarizing and translating...")):
         step4_1_summarize.get_summary()
-        if load_key("pause_before_translate", username=st.session_state.get('username')):
+        if config.for_user(st.session_state.get('username')).pause_before_translate:
             input(t("⚠️ PAUSE_BEFORE_TRANSLATE. Go to `output/log/terminology.json` to edit terminology. Then press ENTER to continue..."))
         step4_2_translate_all.translate_all()
     with st.spinner(t("Processing and aligning subtitles...")): 
@@ -102,7 +102,7 @@ def audio_processing_section():
                 st.rerun()
         else:
             st.success(t("Audio processing is complete! You can check the audio files in the `output` folder."))
-            if load_key("burn_subtitles", username=username):
+            if config.for_user(username).burn_subtitles:
                 st.video(DUB_VIDEO) 
             if st.button(t("Delete dubbing files"), key="delete_dubbing_files"):
                 delete_dubbing_files()
@@ -135,13 +135,13 @@ def process_audio():
 
 def main():
     with open('auth.yaml') as file:
-        config = yaml.load(file, Loader=SafeLoader)
+        auth_config = yaml.load(file, Loader=SafeLoader)
 
     authenticator = stauth.Authenticate(
-        config['credentials'],
-        config['cookie']['name'],
-        config['cookie']['key'],
-        config['cookie']['expiry_days']
+        auth_config['credentials'],
+        auth_config['cookie']['name'],
+        auth_config['cookie']['key'],
+        auth_config['cookie']['expiry_days']
     )
 
     authenticator.login()
@@ -150,7 +150,7 @@ def main():
     username = st.session_state.get('username')
 
     if authentication_status:
-        st.session_state.display_language = load_key("display_language", username=username)
+        st.session_state.display_language = config.for_user(username).display_language
         base_dir = os.path.dirname(os.path.abspath(__file__))
         user_dir = os.path.join(base_dir, "users", username)
         os.makedirs(user_dir, exist_ok=True)

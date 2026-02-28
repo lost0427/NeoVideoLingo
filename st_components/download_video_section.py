@@ -1,7 +1,7 @@
 import streamlit as st
 import os, sys, shutil
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from core.config_utils import load_key
+from core.config_utils import config
 from core.step1_ytdlp import download_video_ytdlp, find_video_files
 from time import sleep
 import re
@@ -43,7 +43,7 @@ def download_video_section():
             video_file = find_video_files(username=username)
             st.video(video_file)
 
-            if load_key("metadata", username=username):
+            if config.for_user(username).metadata:
                 url_file_path = os.path.join("users", username, "output", "url.txt")
                 if os.path.exists(url_file_path):
                     with open(url_file_path, "r", encoding="utf-8") as f:
@@ -129,7 +129,7 @@ def download_video_section():
                     "1080p": "1080",
                     "Best": "best"
                 }
-                target_res = load_key("ytb_resolution")
+                target_res = config.for_user(username).ytb_resolution
                 res_options = list(res_dict.keys())
                 default_idx = list(res_dict.values()).index(target_res) if target_res in res_dict.values() else 0
                 res_display = st.selectbox(t("Resolution"), options=res_options, index=default_idx)
@@ -151,7 +151,10 @@ def download_video_section():
                         download_video_ytdlp(url, resolution=res, username=username)
                     st.rerun()
 
-            uploaded_file = st.file_uploader(t("Or upload video"), type=load_key("allowed_video_formats") + load_key("allowed_audio_formats"))
+            uploaded_file = st.file_uploader(
+                t("Or upload video"),
+                type=config.for_user(username).allowed_video_formats + config.for_user(username).allowed_audio_formats,
+            )
             if uploaded_file:
                 if os.path.exists(OUTPUT_DIR):
                     shutil.rmtree(OUTPUT_DIR)
@@ -164,7 +167,7 @@ def download_video_section():
                 with open(os.path.join(OUTPUT_DIR, clean_name), "wb") as f:
                     f.write(uploaded_file.getbuffer())
 
-                if ext.lower() in load_key("allowed_audio_formats"):
+                if ext.lower() in config.for_user(username).allowed_audio_formats:
                     convert_audio_to_video(os.path.join(OUTPUT_DIR, clean_name))
                 st.rerun()
             else:

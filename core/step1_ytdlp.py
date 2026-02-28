@@ -3,7 +3,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import glob
 import re
 import subprocess
-from core.config_utils import load_key
+from core.config_utils import config
 
 def sanitize_filename(filename):
     # Remove or replace illegal characters
@@ -29,7 +29,7 @@ def download_video_ytdlp(url, save_path='output', resolution='1080', cutoff_time
         base_format = f'bestvideo[height<={resolution}]+bestaudio/best[height<={resolution}]'
         h264_rule = f'bv[ext=mp4][vcodec^=avc1][height<={resolution}]+ba[ext=m4a]'
 
-    if not load_key("h264", username=username):
+    if not config.for_user(username).h264:
         format_str = base_format
     else:
         format_str = f"({h264_rule})/{base_format}"
@@ -97,7 +97,7 @@ def download_video_ytdlp(url, save_path='output', resolution='1080', cutoff_time
 def find_video_files(save_path='output', username=None):
     if username:
         save_path = os.path.join('users', username, 'output')
-    video_files = [file for file in glob.glob(save_path + "/*") if os.path.splitext(file)[1][1:].lower() in load_key("allowed_video_formats", username=username)]
+    video_files = [file for file in glob.glob(save_path + "/*") if os.path.splitext(file)[1][1:].lower() in config.for_user(username).allowed_video_formats]
     # change \\ to /, this happen on windows
     if sys.platform.startswith('win'):
         video_files = [file.replace("\\", "/") for file in video_files]

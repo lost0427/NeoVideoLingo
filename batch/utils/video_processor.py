@@ -2,7 +2,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from st_components.imports_and_utils import *
 from core.onekeycleanup import cleanup
-from core.config_utils import load_key
+from core.config_utils import config
 import shutil
 from functools import partial
 from rich.panel import Panel
@@ -80,7 +80,7 @@ def prepare_output_folder(output_folder):
 def process_input_file(file):
     if file.startswith('http'):
         username = st.session_state.get('username')
-        step1_ytdlp.download_video_ytdlp(file, resolution=load_key(YTB_RESOLUTION_KEY, username=username), cutoff_time=None)
+        step1_ytdlp.download_video_ytdlp(file, resolution=config.get_path(YTB_RESOLUTION_KEY, username=username), cutoff_time=None)
         video_file = step1_ytdlp.find_video_files(username=username)
     else:
         input_file = os.path.join('batch', 'input', file)

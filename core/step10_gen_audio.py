@@ -11,9 +11,10 @@ from rich import print as rprint
 from rich.console import Console
 from rich.progress import Progress
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import streamlit as st
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from core.config_utils import load_key
+from core.config_utils import config
 from core.all_whisper_methods.audio_preprocess import get_audio_duration
 from core.all_tts_functions.tts_main import tts_main
 
@@ -68,14 +69,14 @@ def adjust_audio_speed(input_file: str, output_file: str, speed_factor: float) -
                 rprint(f"[red]❌ Audio speed adjustment failed, max retries reached ({max_retries})[/red]")
                 raise e
 
-def process_row(row: pd.Series, tasks_df: pd.DataFrame) -> Tuple[int, float]:
+def process_row(row: pd.Series, tasks_df: pd.DataFrame, username: str | None = None) -> Tuple[int, float]:
     """Helper function for processing single row data"""
     number = row['number']
     lines = eval(row['lines']) if isinstance(row['lines'], str) else row['lines']
     real_dur = 0
     for line_index, line in enumerate(lines):
         temp_file = TEMP_FILE_TEMPLATE.format(f"{number}_{line_index}")
-        tts_main(line, temp_file, number, tasks_df)
+        tts_main(line, temp_file, number, tasks_df, username=username)
         real_dur += get_audio_duration(temp_file)
     return number, real_dur
 
@@ -83,6 +84,8 @@ def generate_tts_audio(tasks_df: pd.DataFrame) -> pd.DataFrame:
     """Generate TTS audio sequentially and calculate actual duration"""
     tasks_df['real_dur'] = 0
     rprint("[bold green]🎯 Starting TTS audio generation...[/bold green]")
+    username = st.session_state.get('username')
+    active_config = config.for_user(username)
     
     with Progress() as progress:
         task = progress.add_task("[cyan]🔄 Generating TTS audio...", total=len(tasks_df))
@@ -91,7 +94,7 @@ def generate_tts_audio(tasks_df: pd.DataFrame) -> pd.DataFrame:
         warmup_size = min(WARMUP_SIZE, len(tasks_df))
         for _, row in tasks_df.head(warmup_size).iterrows():
             try:
-                number, real_dur = process_row(row, tasks_df)
+                number, real_dur = process_row(row, tasks_df, username=username)
                 tasks_df.loc[tasks_df['number'] == number, 'real_dur'] = real_dur
                 progress.advance(task)
             except Exception as e:
@@ -99,13 +102,13 @@ def generate_tts_audio(tasks_df: pd.DataFrame) -> pd.DataFrame:
                 raise e
         
         # for gpt_sovits, do not use parallel to avoid mistakes
-        max_workers = load_key("max_workers") if load_key("tts_method") != "gpt_sovits" else 1
+        max_workers = active_config.max_workers if active_config.tts_method != "gpt_sovits" else 1
         # parallel processing for remaining tasks
         if len(tasks_df) > warmup_size:
             remaining_tasks = tasks_df.iloc[warmup_size:].copy()
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
                 futures = [
-                    executor.submit(process_row, row, tasks_df.copy())
+                    executor.submit(process_row, row, tasks_df.copy(), username)
                     for _, row in remaining_tasks.iterrows()
                 ]
                 
@@ -147,8 +150,10 @@ def process_chunk(chunk_df: pd.DataFrame, accept: float, min_speed: float) -> tu
 def merge_chunks(tasks_df: pd.DataFrame) -> pd.DataFrame:
     """Merge audio chunks and adjust timeline"""
     rprint("[bold blue]🔄 Starting audio chunks processing...[/bold blue]")
-    accept = load_key("speed_factor.accept")
-    min_speed = load_key("speed_factor.min")
+    username = st.session_state.get('username')
+    active_config = config.for_user(username)
+    accept = active_config.speed_factor.accept
+    min_speed = active_config.speed_factor.min
     chunk_start = 0
     
     tasks_df['new_sub_times'] = None

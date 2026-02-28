@@ -1,4 +1,4 @@
-from core.config_utils import load_key
+from core.config_utils import config
 import requests
 import os
 import subprocess
@@ -28,7 +28,7 @@ def parakeet_transcribe(
     """
     with transcription_lock:
         print("parakeeeeeeet")
-        parakeet_url = load_key("parakeet_url", username=username)
+        parakeet_url = config.for_user(username).parakeet_url
         parakeet_url = urljoin(parakeet_url, 'transcribe')
         # parakeet_url = "http://127.0.0.1:5005/transcribe"
         if not os.path.exists(audio_file):
