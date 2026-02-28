@@ -69,6 +69,8 @@ docker.1ms.run/qwenllm/qwen3-asr
 
 ## 最近更新
 2026年2月
+- 使用 Pydantic
+- 刪除付費 TTS
 - 優化翻譯及自動翻譯工具 增加重置到第一步按鈕
 - 更新新的語言轉錄方式 Qwen3ASR
 （Qwen3-ASR-1.7B + Qwen3-ForcedAligner-0.6B）

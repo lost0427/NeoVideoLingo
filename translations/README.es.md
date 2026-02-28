@@ -18,7 +18,7 @@ NeoVideoLingo: herramienta de localización de video de alta calidad todo en uno
 
 🎥 Procesamiento inteligente: integración de yt-dlp para descargar, reconocimiento WhisperX / Parakeet, segmentación precisa de subtítulos mediante algoritmos NLP.
 
-📝 Traducción perfecta:采用"traducción literal-reflexión-traducción interpretativa" proceso de tres pasos, combinado con biblioteca de términos personalizados, rechazando la sensación de traducción mecánica.
+📝 Traducción perfecta: proceso de tres pasos "traducción literal-reflexión-traducción interpretativa", combinado con biblioteca de términos personalizados, rechazando la sensación de traducción mecánica.
 
 ✅ Experiencia visual: cumplimiento estricto de los estándares de subtítulos de Netflix, asegurando que cada frase se muestre en una sola línea, lectura sin estrés.
 
@@ -69,7 +69,9 @@ Siga las indicaciones para escribir el archivo y otorgar permisos, luego ejecút
 
 ## Actualizaciones recientes
 Febrero 2026
-- Optimización de la traducción y herramientas de traducción automática, añadido botón para reiniciar al primer paso
+- Uso de Pydantic
+- Eliminación de TTS de pago
+- Optimización de traducción y herramientas de traducción automática, añadido botón para reiniciar al primer paso
 - Actualización del nuevo método de transcripción de idiomas Qwen3ASR
 (Qwen3-ASR-1.7B + Qwen3-ForcedAligner-0.6B)
 https://github.com/QwenLM/Qwen3-ASR
