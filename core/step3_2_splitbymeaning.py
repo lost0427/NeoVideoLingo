@@ -17,8 +17,7 @@ def tokenize_sentence(sentence, nlp):
     doc = nlp(sentence)
     return [token.text for token in doc]
 
-def find_split_positions(original, modified):
-    username = st.session_state.get('username')
+def find_split_positions(original, modified, username):
     split_positions = []
     parts = modified.split('[br]')
     start = 0
@@ -62,7 +61,7 @@ def split_sentence(sentence, username, num_parts, word_limit=18, index=-1, retry
     
     response_data = ask_gpt(split_prompt + ' ' * retry_attempt, username=username, response_json=True, valid_def=valid_split, log_title='sentence_splitbymeaning')
     best_split = response_data["split"]
-    split_points = find_split_positions(sentence, best_split)
+    split_points = find_split_positions(sentence, best_split, username)
     # split the sentence based on the split points
     for i, split_point in enumerate(split_points):
         if i == 0:
@@ -83,11 +82,10 @@ def split_sentence(sentence, username, num_parts, word_limit=18, index=-1, retry
     
     return best_split
 
-def parallel_split_sentences(sentences, max_length, max_workers, nlp, retry_attempt=0):
+def parallel_split_sentences(sentences, max_length, max_workers, nlp, username, retry_attempt=0):
     """Split sentences in parallel using a thread pool."""
     new_sentences = [None] * len(sentences)
     futures = []
-    username = st.session_state.get('username')
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         for index, sentence in enumerate(sentences):
             # Use tokenizer to split the sentence
@@ -123,7 +121,14 @@ def split_sentences_by_meaning():
     nlp = init_nlp()
     # 🔄 process sentences multiple times to ensure all are split
     for retry_attempt in range(3):
-        sentences = parallel_split_sentences(sentences, max_length=config.for_user(username).max_split_length, max_workers=config.for_user(username).max_workers, nlp=nlp, retry_attempt=retry_attempt)
+        sentences = parallel_split_sentences(
+            sentences,
+            max_length=config.for_user(username).max_split_length,
+            max_workers=config.for_user(username).max_workers,
+            nlp=nlp,
+            username=username,
+            retry_attempt=retry_attempt,
+        )
 
     # 💾 save results
     username = st.session_state.get('username')

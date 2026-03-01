@@ -35,8 +35,7 @@ def calc_len(text: str) -> float:
 
     return sum(char_weight(char) for char in text)
 
-def align_subs(src_sub: str, tr_sub: str, src_part: str) -> Tuple[List[str], List[str], str]:
-    username = st.session_state.get('username')
+def align_subs(src_sub: str, tr_sub: str, src_part: str, username: str) -> Tuple[List[str], List[str], str]:
     align_prompt = get_align_prompt(src_sub, tr_sub, src_part, username)
     
     def valid_align(response_data):
@@ -67,8 +66,7 @@ def align_subs(src_sub: str, tr_sub: str, src_part: str) -> Tuple[List[str], Lis
     
     return src_parts, tr_parts, tr_remerged
 
-def split_align_subs(src_lines: List[str], tr_lines: List[str]) -> Tuple[List[str], List[str], List[str]]:
-    username = st.session_state.get('username')
+def split_align_subs(src_lines: List[str], tr_lines: List[str], username: str) -> Tuple[List[str], List[str], List[str]]:
     subtitle_set = config.for_user(username).subtitle
     MAX_SUB_LENGTH = subtitle_set.max_length
     TARGET_SUB_MULTIPLIER = subtitle_set.target_multiplier
@@ -87,8 +85,8 @@ def split_align_subs(src_lines: List[str], tr_lines: List[str]) -> Tuple[List[st
             console.print(table)
     
     def process(i):
-        split_src = split_sentence(src_lines[i], num_parts=2).strip()
-        src_parts, tr_parts, tr_remerged = align_subs(src_lines[i], tr_lines[i], split_src)
+        split_src = split_sentence(src_lines[i], username=username, num_parts=2).strip()
+        src_parts, tr_parts, tr_remerged = align_subs(src_lines[i], tr_lines[i], split_src, username=username)
         src_lines[i] = src_parts
         tr_lines[i] = tr_parts
         remerged_tr_lines[i] = tr_remerged
@@ -117,7 +115,7 @@ def split_for_sub_main():
     
     for attempt in range(3):  # 使用固定的3次重试
         console.print(Panel(f"🔄 Split attempt {attempt + 1}", expand=False))
-        split_src, split_trans, remerged = split_align_subs(src.copy(), trans)
+        split_src, split_trans, remerged = split_align_subs(src.copy(), trans, username=username)
         
         # 检查是否所有字幕都符合长度要求
         if all(len(src) <= MAX_SUB_LENGTH for src in split_src) and \
