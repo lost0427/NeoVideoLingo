@@ -52,7 +52,6 @@
     "Start Processing Subtitles": "開始處理字幕",
     "Download All Srt Files": "下載所有Srt檔案",
     "Archive to 'history'": "歸檔到'history'",
-    "Using Whisper for transcription...": "正在使用Whisper進行轉錄...",
     "Splitting long sentences...": "正在分割長句...",
     "Summarizing and translating...": "正在總結和翻譯...",
     "Processing and aligning subtitles...": "正在處理和對齊字幕...",
@@ -121,5 +120,6 @@
     "Transcription Method": "轉錄方法",
     "Select the transcription engine: whisperX, Parakeet, or QwenASR": "選擇轉錄引擎：whisperX、Parakeet 或 QwenASR",
     "Reset to Step A": "重置到步驟A",
-    "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "在 core/all_tts_functions/custom_tts.py 中配置您的自訂 TTS"
+    "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "在 core/all_tts_functions/custom_tts.py 中配置您的自訂 TTS",
+    "Audio separation & transcription...": "正在分離音頻與轉錄..."
 }

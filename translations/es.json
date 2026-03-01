@@ -52,7 +52,6 @@
     "Start Processing Subtitles": "Comenzar procesamiento de subtítulos",
     "Download All Srt Files": "Descargar todos los archivos Srt",
     "Archive to 'history'": "Archivar en 'history'",
-    "Using Whisper for transcription...": "Usando Whisper para transcripción...",
     "Splitting long sentences...": "Dividiendo oraciones largas...",
     "Summarizing and translating...": "Resumiendo y traduciendo...",
     "Processing and aligning subtitles...": "Procesando y alineando subtítulos...",
@@ -121,5 +120,6 @@
     "Transcription Method": "Método de Transcripción",
     "Select the transcription engine: whisperX, Parakeet, or QwenASR": "Seleccione el motor de transcripción: whisperX, Parakeet o QwenASR",
     "Reset to Step A": "Reiniciar al Paso A",
-    "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "Configure su TTS personalizado en core/all_tts_functions/custom_tts.py"
+    "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "Configure su TTS personalizado en core/all_tts_functions/custom_tts.py",
+    "Audio separation & transcription...": "Separación y transcripción de audio..."
 }
