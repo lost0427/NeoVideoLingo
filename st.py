@@ -1,5 +1,7 @@
 import streamlit as st
-import os, sys, shutil
+import os
+import sys
+import shutil
 import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader

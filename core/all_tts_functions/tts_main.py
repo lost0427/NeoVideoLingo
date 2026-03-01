@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import re
 from rich import print as rprint
 from pydub import AudioSegment

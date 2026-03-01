@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from rich.console import Console
 from rich import print as rprint
@@ -10,7 +11,9 @@ import streamlit as st
 import threading
 
 from transformers import AutoModel
-import torch, librosa, soundfile
+import torch
+import librosa
+import soundfile
 import time
 from core.config_utils import config
 

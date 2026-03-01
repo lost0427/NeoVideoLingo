@@ -1,5 +1,7 @@
 import json
-import os, re, sys
+import os
+import re
+import sys
 import platform
 import subprocess
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))

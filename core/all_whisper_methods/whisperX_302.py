@@ -1,5 +1,6 @@
 import requests
-import sys, os
+import sys
+import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from core.config_utils import config
 from rich import print as rprint

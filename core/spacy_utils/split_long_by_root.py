@@ -1,6 +1,7 @@
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
-import os,sys
+import os
+import sys
 sys.path.append(os.path.abspath(os.path.join(__file__, '..', '..', '..')))
 from core.spacy_utils.load_nlp_model import init_nlp
 from core.config_utils import config, get_joiner

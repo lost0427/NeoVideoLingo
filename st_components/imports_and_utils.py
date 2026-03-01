@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core import (
     # Download & Transcribe 📥
@@ -30,7 +31,8 @@ from core.onekeycleanup import cleanup
 from core.delete_retry_dubbing import delete_dubbing_files
 from core.ask_gpt import ask_gpt
 import streamlit as st
-import io, zipfile
+import io
+import zipfile
 from st_components.download_video_section import download_video_section
 from st_components.sidebar_setting import page_setting
 from translations.translations import translate as t

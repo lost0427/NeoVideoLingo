@@ -1,7 +1,8 @@
 from pathlib import Path
 import requests
 from rich import print as rprint
-import os, sys
+import os
+import sys
 import subprocess
 import socket
 import time

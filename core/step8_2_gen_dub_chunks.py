@@ -1,5 +1,6 @@
 import pandas as pd
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.config_utils import config
 from core.all_whisper_methods.audio_preprocess import get_audio_duration

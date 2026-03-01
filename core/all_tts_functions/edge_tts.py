@@ -1,6 +1,7 @@
 from pathlib import Path
 import edge_tts
-import os, sys
+import os
+import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 from core.config_utils import config
 

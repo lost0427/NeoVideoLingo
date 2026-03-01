@@ -1,4 +1,6 @@
-import sys,os,math
+import sys
+import os
+import math
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import concurrent.futures
 from core.ask_gpt import ask_gpt

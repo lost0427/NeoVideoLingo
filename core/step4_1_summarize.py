@@ -1,4 +1,6 @@
-import os, sys, json
+import os
+import sys
+import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.ask_gpt import ask_gpt
 from core.prompts_storage import get_summary_prompt

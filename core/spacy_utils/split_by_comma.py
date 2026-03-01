@@ -1,7 +1,8 @@
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 import itertools
-import os,sys
+import os
+import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from load_nlp_model import init_nlp
 from rich import print
