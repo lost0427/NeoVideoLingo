@@ -95,7 +95,7 @@ def transcribe():
             rprint("[cyan]🎤 Transcribing audio with 302 API...[/cyan]")
         segments = split_audio(whisper_audio)
         for start, end in segments:
-            result = ts(whisper_audio, start, end, username=username)
+            result = ts(whisper_audio, start, end)
             all_results.append(result)
     
     # step5 Combine results
