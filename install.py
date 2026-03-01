@@ -1,16 +1,87 @@
-import os, sys
+import json
+import os, re, sys
 import platform
 import subprocess
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-ascii_logo = """
-__     ___     _            _     _                    
-\ \   / (_) __| | ___  ___ | |   (_)_ __   __ _  ___  
- \ \ / /| |/ _` |/ _ \/ _ \| |   | | '_ \ / _` |/ _ \ 
-  \ V / | | (_| |  __/ (_) | |___| | | | | (_| | (_) |
-   \_/  |_|\__,_|\___|\___/|_____|_|_| |_|\__, |\___/ 
-                                          |___/        
+ascii_logo = r"""
+ _   _            __     ___     _            _     _
+| \ | | ___  ___ \ \   / (_) __| | ___  ___ | |   (_)_ __   __ _  ___
+|  \| |/ _ \/ _ \ \ \ / /| |/ _` |/ _ \/ _ \| |   | | '_ \ / _` |/ _ \
+| |\  |  __/ (_)   \ V / | | (_| |  __/ (_) | |___| | | | | (_| | (_) |
+|_| \_|\___|\___/   \_/  |_|\__,_|\___|\___/|_____|_|_| |_|\__, |\___/
+                                                            |___/
 """
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TRANSLATIONS_DIR = os.path.join(BASE_DIR, "translations")
+DEFAULT_CONFIG_PATH = os.path.join(BASE_DIR, "config.yaml")
+
+DISPLAY_LANGUAGES = {
+    "🇬🇧 English": "en",
+    "🇨🇳 简体中文": "zh-CN",
+    "🇭🇰 繁体中文": "zh-HK",
+    "🇯🇵 日本語": "ja",
+    "🇪🇸 Español": "es",
+    "🇷🇺 Русский": "ru",
+    "🇫🇷 Français": "fr",
+}
+
+_TRANSLATION_CACHE = {}
+_ACTIVE_LANGUAGE = None
+
+
+def _load_default_display_language():
+    default_language = "en"
+    if not os.path.exists(DEFAULT_CONFIG_PATH):
+        return default_language
+
+    try:
+        with open(DEFAULT_CONFIG_PATH, "r", encoding="utf-8") as config_file:
+            for line in config_file:
+                stripped = line.strip()
+                if not stripped or stripped.startswith("#"):
+                    continue
+                if stripped.startswith("display_language:"):
+                    value = stripped.split(":", 1)[1].strip().strip("'\"")
+                    return value or default_language
+    except Exception:
+        return default_language
+
+    return default_language
+
+
+def set_install_language(language):
+    global _ACTIVE_LANGUAGE
+    _ACTIVE_LANGUAGE = language or "en"
+
+
+def load_translations(language):
+    lang = language or "en"
+    if lang in _TRANSLATION_CACHE:
+        return _TRANSLATION_CACHE[lang]
+
+    file_path = os.path.join(TRANSLATIONS_DIR, f"{lang}.json")
+    if not os.path.exists(file_path):
+        _TRANSLATION_CACHE[lang] = {}
+        return _TRANSLATION_CACHE[lang]
+
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            _TRANSLATION_CACHE[lang] = json.load(file)
+    except Exception:
+        _TRANSLATION_CACHE[lang] = {}
+    return _TRANSLATION_CACHE[lang]
+
+
+def t(key):
+    active_language = _ACTIVE_LANGUAGE or _load_default_display_language()
+    translations = load_translations(active_language)
+    translation = translations.get(key)
+    if translation is None:
+        print(f"Warning: Translation not found for key '{key}' in language '{active_language}'")
+        return key
+    return translation
 
 def install_package(*packages):
     subprocess.check_call([sys.executable, "-m", "pip", "install", *packages])
@@ -18,7 +89,6 @@ def install_package(*packages):
 def check_nvidia_gpu():
     install_package("nvidia-ml-py")
     import pynvml
-    from translations.translations import translate as t
     try:
         pynvml.nvmlInit()
         device_count = pynvml.nvmlDeviceGetCount()
@@ -38,10 +108,49 @@ def check_nvidia_gpu():
     finally:
         pynvml.nvmlShutdown()
 
+def _parse_version(version_str):
+    match = re.search(r"\d+(?:\.\d+)*", version_str or "")
+    if not match:
+        return None
+    parts = [int(p) for p in match.group(0).split(".")]
+    while len(parts) < 2:
+        parts.append(0)
+    return tuple(parts[:2])
+
+def detect_cuda_version():
+    try:
+        result = subprocess.run(
+            ["nvidia-smi"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        match = re.search(r"CUDA Version:\s*([0-9]+(?:\.[0-9]+)?)", result.stdout)
+        if match:
+            return match.group(1)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+
+    try:
+        result = subprocess.run(
+            ["nvcc", "--version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        match = re.search(r"release\s+([0-9]+(?:\.[0-9]+)?)", result.stdout + result.stderr)
+        if match:
+            return match.group(1)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+
+    return None
+
 def check_ffmpeg():
     from rich.console import Console
     from rich.panel import Panel
-    from translations.translations import translate as t
     console = Console()
 
     try:
@@ -78,8 +187,6 @@ def main():
     from rich.panel import Panel
     from rich.box import DOUBLE
     from InquirerPy import inquirer
-    from translations.translations import load_translations
-    from translations.translations import DISPLAY_LANGUAGES
 
     console = Console()
     
@@ -93,22 +200,16 @@ def main():
     )
     console.print(welcome_panel)
 
+    language_labels = {value: label for label, value in DISPLAY_LANGUAGES.items()}
+    default_language = _load_default_display_language()
+    default_choice = language_labels.get(default_language, "🇬🇧 English")
+
     selected_language = DISPLAY_LANGUAGES[inquirer.select(
         message="Select language / 选择语言 / 選擇語言 / 言語を選択 / Seleccionar idioma / Sélectionner la langue / Выберите язык:",
         choices=list(DISPLAY_LANGUAGES.keys()),
-        default="en"
+        default=default_choice
     ).execute()]
-
-    def t(key):
-        try:
-            translations = load_translations(selected_language)
-            translation = translations.get(key)
-            if translation is None:
-                print(f"Warning: Translation not found for key '{key}' in language '{selected_language}'")
-                return key
-            return translation
-        except:
-            return key
+    set_install_language(selected_language)
 
     console.print(Panel.fit(t("🚀 Starting Installation"), style="bold magenta"))
 
@@ -124,8 +225,24 @@ def main():
     # Detect system and GPU
     has_gpu = platform.system() != 'Darwin' and check_nvidia_gpu()
     if has_gpu:
-        console.print(Panel(t("🎮 NVIDIA GPU detected, installing CUDA version of PyTorch..."), style="cyan"))
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "torch==2.8.0", "torchvision==0.23.0", "torchaudio==2.8.0", "--index-url", "https://download.pytorch.org/whl/cu128"])
+        cuda_version = detect_cuda_version()
+        cuda_tuple = _parse_version(cuda_version)
+        cuda_tag = "cu129" if cuda_tuple and cuda_tuple >= (13, 0) else "cu128"
+        console.print(Panel(
+            f"{cuda_version or 'unknown'} {cuda_tag}",
+            style="cyan"
+        ))
+        subprocess.check_call([
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "torch==2.8.0",
+            "torchvision==0.23.0",
+            "torchaudio==2.8.0",
+            "--index-url",
+            f"https://download.pytorch.org/whl/{cuda_tag}"
+        ])
     else:
         system_name = "🍎 MacOS" if platform.system() == 'Darwin' else "💻 No NVIDIA GPU"
         console.print(Panel(t(f"{system_name} detected, installing CPU version of PyTorch... Note: it might be slow during whisperX transcription."), style="cyan"))
