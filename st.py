@@ -19,6 +19,7 @@ def text_processing_section():
     username = st.session_state.get('username')
     OUTPUT_DIR = os.path.join("users", username, "output")
     SUB_VIDEO = os.path.join("users", username, "output", "output_sub.mp4")
+    SRC_SRT = os.path.join("users", username, "output", "src.srt")
     st.header(t("b. Translate and Generate Subtitles"))
     with st.container(border=True):
         st.markdown(f"""
@@ -33,14 +34,23 @@ def text_processing_section():
             6. {t("Merging subtitles into the video")}
         """, unsafe_allow_html=True)
 
-        if not os.path.exists(SUB_VIDEO):
+        has_sub_video = os.path.exists(SUB_VIDEO)
+        has_src_srt = os.path.exists(SRC_SRT)
+
+        if not has_sub_video and not has_src_srt:
             if st.button(t("Start Processing Subtitles"), key="text_processing_button"):
                 process_text()
                 st.rerun()
+            if st.button(t("Skip Translation (Export Source Subtitles Only)"), key="text_processing_src_only_button"):
+                process_text_source_only()
+                st.rerun()
         else:
-            if config.for_user(username).burn_subtitles:
+            if has_sub_video and config.for_user(username).burn_subtitles:
                 st.video(SUB_VIDEO)
-            download_subtitle_zip_button(text=t("Download All Srt Files"))
+            if has_src_srt:
+                download_subtitle_zip_button(text=t("Download All Srt Files"))
+            else:
+                st.warning(t("Subtitle files are missing. Please run subtitle processing again."))
             
             if st.button(t("Reset to Step A"), key="back_in_text_processing"):
                 if os.path.exists(OUTPUT_DIR):
@@ -86,6 +96,18 @@ def process_text():
         step7_merge_sub_to_vid.merge_subtitles_to_video()
     
     st.success(t("Subtitle processing complete! 🎉"))
+    st.balloons()
+
+def process_text_source_only():
+    with st.spinner(t("Audio separation & transcription...")):
+        step2_whisperX.transcribe()
+    with st.spinner(t("Splitting long sentences...")):
+        step3_1_spacy_split.split_by_spacy()
+        step3_2_splitbymeaning.split_sentences_by_meaning()
+    with st.spinner(t("Exporting source subtitles only...")):
+        step6_generate_final_timeline.align_timestamp_src_only_main()
+
+    st.success(t("Source subtitles exported successfully! 🎉"))
     st.balloons()
 
 def audio_processing_section():

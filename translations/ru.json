@@ -121,5 +121,9 @@
     "Select the transcription engine: whisperX, Parakeet, or QwenASR": "Выберите движок транскрипции: whisperX, Parakeet или QwenASR",
     "Reset to Step A": "Сброс к шагу A",
     "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "Настройте ваш собственный TTS в core/all_tts_functions/custom_tts.py",
-    "Audio separation & transcription...": "Разделение аудио и расшифровка..."
+    "Audio separation & transcription...": "Разделение аудио и расшифровка...",
+    "Skip Translation (Export Source Subtitles Only)": "Пропустить перевод (экспортировать только исходные субтитры)",
+    "Subtitle files are missing. Please run subtitle processing again.": "Файлы субтитров отсутствуют. Пожалуйста, запустите обработку субтитров снова.",
+    "Exporting source subtitles only...": "Экспортируются только исходные субтитры...",
+    "Source subtitles exported successfully! 🎉": "Исходные субтитры успешно экспортированы! 🎉"
 }

@@ -121,5 +121,9 @@
     "Select the transcription engine: whisperX, Parakeet, or QwenASR": "Seleccione el motor de transcripción: whisperX, Parakeet o QwenASR",
     "Reset to Step A": "Reiniciar al Paso A",
     "Configure your custom TTS in core/all_tts_functions/custom_tts.py": "Configure su TTS personalizado en core/all_tts_functions/custom_tts.py",
-    "Audio separation & transcription...": "Separación y transcripción de audio..."
+    "Audio separation & transcription...": "Separación y transcripción de audio...",
+    "Skip Translation (Export Source Subtitles Only)": "Omitir traducción (Exportar solo subtítulos originales)",
+    "Subtitle files are missing. Please run subtitle processing again.": "Faltan archivos de subtítulos. Por favor, ejecuta el procesamiento de subtítulos nuevamente.",
+    "Exporting source subtitles only...": "Exportando solo subtítulos originales...",
+    "Source subtitles exported successfully! 🎉": "¡Subtítulos originales exportados exitosamente! 🎉"
 }

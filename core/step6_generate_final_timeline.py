@@ -22,6 +22,14 @@ AUDIO_SUBTITLE_OUTPUT_CONFIGS = [
     ('trans_subs_for_audio.srt', ['Translation'])
 ]
 
+SRC_ONLY_SUBTITLE_OUTPUT_CONFIGS = [
+    ('src.srt', ['Source'])
+]
+
+SRC_ONLY_AUDIO_SUBTITLE_OUTPUT_CONFIGS = [
+    ('src_subs_for_audio.srt', ['Source'])
+]
+
 def convert_to_srt_format(start_time, end_time):
     """Convert time (in seconds) to the format: hours:minutes:seconds,milliseconds"""
     def seconds_to_hmsm(seconds):
@@ -171,7 +179,29 @@ def align_timestamp_main():
     
     align_timestamp(df_text, df_translate_for_audio, AUDIO_SUBTITLE_OUTPUT_CONFIGS, AUDIO_OUTPUT_DIR)
     console.print(Panel("[bold green]🎉📝 Audio subtitles generation completed! Please check in the `output/audio` folder 👀[/bold green]"))
-    
+
+
+def align_timestamp_src_only_main():
+    username = st.session_state.get('username')
+    CLEANED_CHUNKS_FILE = os.path.join("users", username, "output", "log", "cleaned_chunks.xlsx")
+    SENTENCE_SPLIT_BY_MEANING_FILE = os.path.join("users", username, "output", "log", "sentence_splitbymeaning.txt")
+    OUTPUT_DIR = os.path.join("users", username, "output")
+    AUDIO_OUTPUT_DIR = os.path.join("users", username, "output", "audio")
+
+    df_text = pd.read_excel(CLEANED_CHUNKS_FILE)
+    df_text['text'] = df_text['text'].str.strip('"').str.strip()
+
+    with open(SENTENCE_SPLIT_BY_MEANING_FILE, "r", encoding="utf-8") as file:
+        source_lines = [line.strip() for line in file.readlines() if line.strip()]
+
+    df_source = pd.DataFrame({"Source": source_lines})
+
+    align_timestamp(df_text, df_source, SRC_ONLY_SUBTITLE_OUTPUT_CONFIGS, OUTPUT_DIR, for_display=False)
+    console.print(Panel("[bold green]🎉📝 Source subtitles generation completed! Please check in the `output` folder 👀[/bold green]"))
+
+    align_timestamp(df_text, df_source, SRC_ONLY_AUDIO_SUBTITLE_OUTPUT_CONFIGS, AUDIO_OUTPUT_DIR, for_display=False)
+    console.print(Panel("[bold green]🎉📝 Source audio subtitles generation completed! Please check in the `output/audio` folder 👀[/bold green]"))
+
 
 if __name__ == '__main__':
     align_timestamp_main()
