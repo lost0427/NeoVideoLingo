@@ -16,7 +16,7 @@ def install_package(*packages):
     subprocess.check_call([sys.executable, "-m", "pip", "install", *packages])
 
 def check_nvidia_gpu():
-    install_package("pynvml")
+    install_package("nvidia-ml-py")
     import pynvml
     from translations.translations import translate as t
     try:
