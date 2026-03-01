@@ -68,8 +68,16 @@ Après avoir téléchargé et démarré le conteneur avec succès, le service de
 Suivez les instructions pour écrire le fichier et lui donner les permissions nécessaires, puis exécutez-le. Utilisez le framework vllm, il s'exécute sur le port 80 du conteneur (port 8700 de l'hôte).
 
 ## Mises à jour récentes
-Février 2026
+Mars 2026
+- Mise à jour de la fonctionnalité de saut de traduction
+- Mise à jour des dépendances
+- Correction des erreurs multithread
+- Correction de WhisperX
+- Suppression du préfixe `f` redondant dans les chaînes
+- Mise à jour du script d'installation
 - Remplacement de la dépendance NVML
+
+Février 2026
 - Utilisation de Pydantic
 - Suppression du TTS payant
 - Optimisation de la traduction et des outils de traduction automatique, ajout d’un bouton pour revenir à la première étape

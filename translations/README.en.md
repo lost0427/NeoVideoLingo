@@ -68,8 +68,16 @@ After successfully downloading and starting the container, the transcription ser
 Follow the prompts to write the file and grant permissions, then run it. Using the vLLM framework, it runs on port 80 within the container (port 8700 on the host).
 
 ## Recent Updates
+March 2026
+- Updated skip-translation feature
+- Updated dependencies
+- Fixed multi-threading errors
+- Fixed WhisperX
+- Removed redundant `f` prefixes in strings
+- Updated installation script
+- Replaced NVML dependency
+
 February 2026
-- Replace NVML dependency
 - Use Pydantic
 - Remove paid TTS
 - Optimize translation and auto-translation tools with reset to first step button

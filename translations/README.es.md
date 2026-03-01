@@ -68,8 +68,16 @@ Después de descargar y arrancar exitosamente el contenedor, el servicio de tran
 Siga las indicaciones para escribir el archivo y otorgar permisos, luego ejecútelo. Usa el marco vllm, ejecutándose en el puerto 80 del contenedor (puerto 8700 del host).
 
 ## Actualizaciones recientes
+Marzo 2026
+- Se actualizó la función para omitir la traducción
+- Se actualizaron las dependencias
+- Se corrigieron errores de multihilo
+- Se corrigió WhisperX
+- Se eliminó el prefijo `f` redundante en las cadenas
+- Se actualizó el script de instalación
+- Se reemplazó la dependencia NVML
+
 Febrero 2026
-- Reemplazo de dependencia NVML
 - Uso de Pydantic
 - Eliminación de TTS de pago
 - Optimización de traducción y herramientas de traducción automática, añadido botón para reiniciar al primer paso
