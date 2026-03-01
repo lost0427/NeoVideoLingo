@@ -135,7 +135,7 @@ def merge_full_audio():
             format="mp3",
             parameters=["-b:a", "64k"]
         )
-    console.print(f"[bold green]✅ Audio file successfully merged![/bold green]")
+    console.print("[bold green]✅ Audio file successfully merged![/bold green]")
     console.print(f"[bold green]📁 Output file: {DUB_VOCAL_FILE}[/bold green]")
 
 if __name__ == "__main__":

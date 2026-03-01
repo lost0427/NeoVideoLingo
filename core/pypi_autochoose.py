@@ -102,7 +102,7 @@ def main():
             else:
                 console.print(f"❌ Switch failed\nExpected: {fastest_url}\nCurrent: {current_mirror}\n💡 Try running with admin privileges", style="red")
         else:
-            console.print(f"❌ Failed to switch mirror\n💡 Check permissions and try again", style="red")
+            console.print("❌ Failed to switch mirror\n💡 Check permissions and try again", style="red")
     else:
         console.print("❌ All mirrors unreachable\n💡 Check network connection", style="red")
 

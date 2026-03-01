@@ -178,7 +178,7 @@ def convert_audio_to_video(audio_file: str) -> str:
     OUTPUT_DIR = os.path.join("users", username, "output")
     output_video = os.path.join(OUTPUT_DIR, 'black_screen.mp4')
     if not os.path.exists(output_video):
-        print(f"🎵➡️🎬 Converting audio to video with FFmpeg ......")
+        print("🎵➡️🎬 Converting audio to video with FFmpeg ......")
         ffmpeg_cmd = ['ffmpeg', '-y', '-f', 'lavfi', '-i', 'color=c=black:s=640x360', '-i', audio_file, '-shortest', '-c:v', 'libx264', '-c:a', 'aac', '-pix_fmt', 'yuv420p', output_video]
         subprocess.run(ffmpeg_cmd, check=True, capture_output=True, text=True, encoding='utf-8')
         print(f"🎵➡️🎬 Converted <{audio_file}> to <{output_video}> with FFmpeg\n")

@@ -114,7 +114,7 @@ def sync_readme():
     print(f"📄 读取源文件: {SOURCE_FILE}")
     source_content = read_file(SOURCE_FILE)
     if not source_content:
-        print(f"❌ 源文件未找到或为空")
+        print("❌ 源文件未找到或为空")
         return
 
     print(f"🚀 开始并发翻译 README (使用模型: {MODEL}, 共 {len(TARGET_LANGS)} 个语言)...\n")

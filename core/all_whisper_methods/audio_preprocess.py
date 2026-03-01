@@ -10,7 +10,7 @@ import streamlit as st
 def compress_audio(input_file: str, output_file: str):
     """将输入音频文件压缩为低质量音频文件，用于转录"""
     if not os.path.exists(output_file):
-        print(f"🗜️ Converting to low quality audio with FFmpeg ......")
+        print("🗜️ Converting to low quality audio with FFmpeg ......")
         # 16000 Hz, 1 channel, (Whisper default) , 96kbps to keep more details as well as smaller file size
         subprocess.run([
             'ffmpeg', '-y', '-i', input_file, '-vn', '-b:a', '96k',
@@ -27,7 +27,7 @@ def convert_video_to_audio(video_file: str):
 
     os.makedirs(AUDIO_DIR, exist_ok=True)
     if not os.path.exists(RAW_AUDIO_FILE):
-        print(f"🎬➡️🎵 Converting to high quality audio with FFmpeg ......")
+        print("🎬➡️🎵 Converting to high quality audio with FFmpeg ......")
         subprocess.run([
             'ffmpeg', '-y', '-i', video_file, '-vn',
             '-c:a', 'libmp3lame', '-b:a', '128k',

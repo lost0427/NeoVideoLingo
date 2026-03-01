@@ -56,7 +56,7 @@ def ask_gpt(prompt, username, response_json=True, valid_def=None, log_title='def
             return history_response
     
     if not api_set.key:
-        raise ValueError(f"⚠️API_KEY is missing")
+        raise ValueError("⚠️API_KEY is missing")
     
     messages = [{"role": "user", "content": prompt}]
     
@@ -91,7 +91,7 @@ def ask_gpt(prompt, username, response_json=True, valid_def=None, log_title='def
                 except Exception as e:
                     response_data = response.choices[0].message.content
                     print(f"❎ json_repair parsing failed. Retrying: '''{response_data}'''")
-                    save_log(api_set.model, prompt, response_data, username=username, log_title="error", message=f"json_repair parsing failed.")
+                    save_log(api_set.model, prompt, response_data, username=username, log_title="error", message="json_repair parsing failed.")
                     if attempt == max_retries - 1:
                         raise Exception(f"JSON parsing still failed after {max_retries} attempts: {e}\n Please check your network connection or API key or `output/gpt_log/error.json` to debug.")
             else:

@@ -105,7 +105,7 @@ def gpt_sovits_tts_for_videolingo(text, save_as, number, task_df, username=None)
 
     success = gpt_sovits_tts(text, TARGET_LANGUAGE, save_as, ref_audio_path, prompt_lang, prompt_text)
     if not success and REFER_MODE == 3:
-        rprint(f"[bold red]TTS request failed, switching back to mode 2 and retrying[/bold red]")
+        rprint("[bold red]TTS request failed, switching back to mode 2 and retrying[/bold red]")
         ref_audio_path = current_dir / "output/audio/refers/1.wav"
         gpt_sovits_tts(text, TARGET_LANGUAGE, save_as, ref_audio_path, prompt_lang, prompt_text)
 

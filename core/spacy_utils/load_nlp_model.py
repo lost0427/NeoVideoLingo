@@ -32,5 +32,5 @@ def init_nlp():
             nlp = spacy.load(model)
     except:
         raise ValueError(f"❌ Failed to load NLP Spacy model: {model}")
-    print(f"[green]✅ NLP Spacy model loaded successfully![/green]")
+    print("[green]✅ NLP Spacy model loaded successfully![/green]")
     return nlp
