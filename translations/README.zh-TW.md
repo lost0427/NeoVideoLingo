@@ -69,6 +69,7 @@ docker.1ms.run/qwenllm/qwen3-asr
 
 ## 最近更新
 2026年2月
+- 替換 NVML 依賴
 - 使用 Pydantic
 - 刪除付費 TTS
 - 優化翻譯及自動翻譯工具 增加重置到第一步按鈕

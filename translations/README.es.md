@@ -69,6 +69,7 @@ Siga las indicaciones para escribir el archivo y otorgar permisos, luego ejecút
 
 ## Actualizaciones recientes
 Febrero 2026
+- Reemplazo de dependencia NVML
 - Uso de Pydantic
 - Eliminación de TTS de pago
 - Optimización de traducción y herramientas de traducción automática, añadido botón para reiniciar al primer paso

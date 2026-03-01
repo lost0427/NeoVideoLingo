@@ -69,6 +69,7 @@ Follow the prompts to write the file and grant permissions, then run it. Using t
 
 ## Recent Updates
 February 2026
+- Replace NVML dependency
 - Use Pydantic
 - Remove paid TTS
 - Optimize translation and auto-translation tools with reset to first step button

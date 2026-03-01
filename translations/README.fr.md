@@ -69,6 +69,7 @@ Suivez les instructions pour écrire le fichier et lui donner les permissions n�
 
 ## Mises à jour récentes
 Février 2026
+- Remplacement de la dépendance NVML
 - Utilisation de Pydantic
 - Suppression du TTS payant
 - Optimisation de la traduction et des outils de traduction automatique, ajout d’un bouton pour revenir à la première étape

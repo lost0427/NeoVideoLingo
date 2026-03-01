@@ -69,6 +69,7 @@ docker.1ms.run/qwenllm/qwen3-asr
 
 ## 最近の更新
 2026年2月
+- NVML依存関係の置換
 - Pydantic の使用
 - 有料 TTS の削除
 - 翻訳および自動翻訳ツールの最適化、最初のステップに戻るボタンを追加
