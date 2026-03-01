@@ -129,7 +129,7 @@ Septembre 2025
 
 ## Remarque
 
-Ce dépôt ne maintient pas la partie doublage
+La partie doublage sera prochainement adaptée à Indextts2.0
 
 ## Méthode d'installation
 
@@ -138,3 +138,9 @@ conda create -n videolingo python==3.11.13
 conda activate videolingo
 python ./install.py
 ```
+
+### Méthode d'ajout d'utilisateur
+
+1. Copiez `auth.yaml.example` en `auth.yaml`, puis remplissez le nom d'utilisateur et le mot de passe dans `auth.yaml`.
+2. Créez un dossier `\users\NomUtilisateur`.
+3. Placez un fichier `config.yaml` dans `\users\NomUtilisateur`, et créez un dossier `output`.

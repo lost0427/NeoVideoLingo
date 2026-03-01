@@ -129,7 +129,7 @@ https://github.com/QwenLM/Qwen3-ASR
 
 ## 注意
 
-本倉庫並不維護配音部分
+配音部分 即將適配 Indextts2.0
 
 ## 安裝方法
 
@@ -138,3 +138,9 @@ conda create -n videolingo python==3.11.13
 conda activate videolingo
 python ./install.py
 ```
+
+### 新增使用者方法
+
+1. 複製一份 `auth.yaml.example` 為 `auth.yaml`，並在 `auth.yaml` 中填寫使用者名稱與密碼。
+2. 建立 `\users\使用者名稱` 資料夾。
+3. 在 `\users\使用者名稱` 下放置一份 `config.yaml`，並建立 `output` 資料夾。

@@ -129,7 +129,7 @@ https://github.com/QwenLM/Qwen3-ASR
 
 ## 注意
 
-このリポジトリは吹き替え部分は保守していません
+ナレーション部分：間もなくIndex-TTS 2.0に対応予定です。
 
 ## インストール方法
 
@@ -138,3 +138,9 @@ conda create -n videolingo python==3.11.13
 conda activate videolingo
 python ./install.py
 ```
+
+### ユーザー追加方法
+
+1. `auth.yaml.example` を `auth.yaml` としてコピーし、`auth.yaml` にユーザー名とパスワードを入力します。
+2. `\users\ユーザー名` フォルダーを作成します。
+3. `\users\ユーザー名` の下に `config.yaml` を作成し、`output` フォルダーを作成します。
