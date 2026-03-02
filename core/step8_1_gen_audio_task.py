@@ -39,7 +39,7 @@ def check_len_then_trim(text, duration):
                 return {'status': 'error', 'message': 'No result in response'}
             return {'status': 'success', 'message': ''}
         try:    
-            response = ask_gpt(prompt, response_json=True, log_title='subtitle_trim', valid_def=valid_trim)
+            response = ask_gpt(prompt, username=username, response_json=True, log_title='subtitle_trim', valid_def=valid_trim)
             shortened_text = response['result']
         except Exception:
             rprint("[bold red]🚫 AI refused to answer due to sensitivity, so manually remove punctuation[/bold red]")

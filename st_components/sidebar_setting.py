@@ -171,8 +171,9 @@ def page_setting():
         
 def check_api():
     try:
+        username = st.session_state.get('username')
         resp = ask_gpt("This is a test, response 'message':'success' in json format.", 
-                      response_json=True, log_title='None')
+                      username=username, response_json=True, log_title='None')
         return resp.get('message') == 'success'
     except Exception:
         return False
