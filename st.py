@@ -76,7 +76,6 @@ def text_processing_section():
                     pass
                 if os.path.exists(OUTPUT_DIR):
                     shutil.rmtree(OUTPUT_DIR)
-                sleep(1)
                 st.rerun()
             return True
 
@@ -150,7 +149,6 @@ def audio_processing_section():
                     pass
                 if os.path.exists(OUTPUT_DIR):
                     shutil.rmtree(OUTPUT_DIR)
-                sleep(1)
                 st.rerun()
 
 def process_audio():
