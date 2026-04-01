@@ -11,8 +11,10 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_CONFIG_PATH = ROOT_DIR / "config.yaml"
 USERS_DIR = ROOT_DIR / "users"
 
-yaml = YAML()
-yaml.preserve_quotes = True
+def _new_yaml() -> YAML:
+    yaml = YAML()
+    yaml.preserve_quotes = True
+    return yaml
 
 
 class ConfigBaseModel(BaseModel):
@@ -162,7 +164,7 @@ class ConfigManager:
     def _load_from_disk(self, username: str | None = None) -> AppConfig:
         config_path = get_user_config_path(username)
         with config_path.open("r", encoding="utf-8") as file:
-            raw_data = yaml.load(file) or {}
+            raw_data = _new_yaml().load(file) or {}
         if username:
             user_config_path = USERS_DIR / username / "config.yaml"
             if user_config_path.exists():
@@ -187,7 +189,7 @@ class ConfigManager:
             config_path = get_user_config_path(username)
             config_path.parent.mkdir(parents=True, exist_ok=True)
             with config_path.open("w", encoding="utf-8") as file:
-                yaml.dump(config_model.model_dump(mode="python", exclude_none=True), file)
+                _new_yaml().dump(config_model.model_dump(mode="python", exclude_none=True), file)
             self._cache[key] = config_model
 
     def _walk_path(self, obj: Any, path_parts: list[str]) -> Any:
@@ -257,4 +259,3 @@ def get_joiner(language: str, username: str | None = None) -> str:
     if language in active_config.language_split_without_space:
         return ""
     raise ValueError(f"Unsupported language code: {language}")
-
