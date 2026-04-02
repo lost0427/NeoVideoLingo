@@ -15,23 +15,6 @@ def config_input(label, key, help=None):
         config.set_path(key, val, username=username)
     return val
 
-
-def config_float_input(label, key, min_value=None, max_value=None, step=0.001, help=None):
-    username = st.session_state.get('username')
-    current = float(config.get_path(key, username=username))
-    val = st.number_input(
-        label,
-        min_value=min_value,
-        max_value=max_value,
-        value=current,
-        step=step,
-        format="%.3f",
-        help=help,
-    )
-    if val != current:
-        config.set_path(key, float(val), username=username)
-    return val
-
 def page_setting():
     username = st.session_state.get('username')
 
@@ -121,20 +104,8 @@ def page_setting():
             if target_language != config.for_user(username).target_language:
                 config.set_path('target_language', target_language, username=username)
                 st.rerun()
-        config_float_input(
-            t("WhisperX vad_onset"),
-            "whisper.vad_onset",
-            min_value=0.0,
-            max_value=1.0,
-            help=t("Voice Activity Detection start threshold - Range: 0-1, higher more strict, lower more sensitive"),
-        )
-        config_float_input(
-            t("WhisperX vad_offset"),
-            "whisper.vad_offset",
-            min_value=0.0,
-            max_value=1.0,
-            help=t("Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier"),
-        )
+        config_input(t("WhisperX vad_onset"), "whisper.vad_onset", help=t("Voice Activity Detection start threshold - Range: 0-1, higher more strict, lower more sensitive"))
+        config_input(t("WhisperX vad_offset"), "whisper.vad_offset", help=t("Voice Activity Detection end threshold - Range: 0-1, lower detects weak signals, higher ends earlier"))
         roformer = st.toggle(t("Vocal separation enhance"), value=config.for_user(username).roformer, help=t("Recommended for videos with loud background noise, but will increase processing time"))
         if roformer != config.for_user(username).roformer:
             config.set_path('roformer', roformer, username=username)
