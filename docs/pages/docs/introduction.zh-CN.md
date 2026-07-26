@@ -91,12 +91,15 @@ python install.py
 streamlit run st.py
 ```
 
-### Docker
-还可以选择使用 Docker（要求 CUDA 12.4 和 NVIDIA Driver 版本 >550），详见[Docker文档](/docs/pages/docs/docker.zh-CN.md)：
+### Docker / Podman
+还可以选择 Docker 或 Podman（默认镜像使用 Python 3.11、PyTorch 2.8 和 CUDA 12.8），详见 [容器部署文档](/docs/pages/docs/docker.zh-CN.md)：
 
 ```bash
-docker build -t videolingo .
-docker run -d -p 8501:8501 --gpus all videolingo
+cp auth.yaml.example auth.yaml
+podman pull ghcr.io/lost0427/neovideolingo:latest
+podman run -d --device nvidia.com/gpu=all -p 8501:8501 \
+  -v "$(pwd)/auth.yaml:/app/auth.yaml:ro" \
+  ghcr.io/lost0427/neovideolingo:latest
 ```
 
 ## API

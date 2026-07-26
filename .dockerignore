@@ -1,0 +1,34 @@
+.git
+.github
+.gitignore
+.gitattributes
+.dockerignore
+
+**/__pycache__
+**/*.py[cod]
+**/.DS_Store
+.ruff_cache
+.pytest_cache
+.mypy_cache
+.venv
+venv
+
+# Runtime data and downloaded models belong in mounts, not image layers.
+_model_cache
+users
+output
+history
+batch
+
+# Never bake local credentials or environment files into an image.
+auth.yaml
+.env
+.env.*
+config.backup.yaml
+translations/config.ini
+
+# Documentation build outputs and local editor state.
+docs/node_modules
+docs/.next
+.vscode
+.idea

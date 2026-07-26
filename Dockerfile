@@ -1,56 +1,83 @@
-ARG CUDA_VERSION=12.4.1
-FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu20.04
+# Keep this tag aligned with the torch/torchaudio versions used by install.py
+# and required by WhisperX.
+ARG PYTORCH_IMAGE=pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime
+FROM ${PYTORCH_IMAGE}
 
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-ARG PYTHON_VERSION=3.10
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Change software sources and install basic tools and system dependencies
-RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
-    sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
-    apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common git curl sudo ffmpeg fonts-noto wget \
-    && add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update -y \
-    && apt-get install -y python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python${PYTHON_VERSION}-venv \
-    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1 \
-    && update-alternatives --set python3 /usr/bin/python${PYTHON_VERSION} \
-    && ln -sf /usr/bin/python${PYTHON_VERSION}-config /usr/bin/python3-config \
-    && curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION} \
-    && python3 --version && python3 -m pip --version
+ARG APP_UID=10001
+ARG APP_GID=10001
 
-# Clean apt cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
+    STREAMLIT_SERVER_PORT=8501 \
+    STREAMLIT_SERVER_HEADLESS=true \
+    XDG_CACHE_HOME=/app/_model_cache \
+    HF_HOME=/app/_model_cache/huggingface \
+    TORCH_HOME=/app/_model_cache/torch \
+    NLTK_DATA=/app/_model_cache/nltk
 
-# Workaround for CUDA compatibility issues
-RUN ldconfig /usr/local/cuda-$(echo $CUDA_VERSION | cut -d. -f1,2)/compat/
+# FFmpeg handles all media operations. The remaining runtime libraries support
+# OpenCV, SoundFile, CTranslate2, multilingual subtitles, HTTPS, and signal
+# forwarding. Compiler/CUDA development packages are intentionally omitted.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        ffmpeg \
+        fontconfig \
+        fonts-noto-cjk \
+        fonts-noto-color-emoji \
+        fonts-noto-core \
+        iputils-ping \
+        libgl1 \
+        libglib2.0-0 \
+        libgomp1 \
+        libsndfile1 \
+        tini \
+    && fc-cache -f \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set working directory and clone repository
 WORKDIR /app
-RUN git clone https://github.com/Huanshere/VideoLingo.git .
 
-# Install PyTorch and torchaudio
-RUN pip install torch==2.0.0 torchaudio==2.0.0 --index-url https://download.pytorch.org/whl/cu118
+# Dependency installation is cached until requirements.txt changes.
+COPY requirements.txt ./
+RUN python -c "import sys; assert sys.version_info[:2] == (3, 11), sys.version" \
+    && python -m pip install --upgrade pip setuptools wheel \
+    && python -m pip install -r requirements.txt \
+    && python -m pip check \
+    && python -c "import torch; assert torch.__version__.startswith('2.8.'); print('torch:', torch.__version__, 'cuda:', torch.version.cuda)"
 
-# Clean up unnecessary files
-RUN rm -rf .git
+# spaCy installs language models on demand. Redirect those runtime installs to
+# an application-owned directory while keeping image dependencies immutable.
+ENV PYTHONPATH=/app/.runtime_packages \
+    PIP_TARGET=/app/.runtime_packages
 
-# Upgrade pip and install basic dependencies
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+RUN groupadd --gid "${APP_GID}" videolingo \
+    && useradd --uid "${APP_UID}" --gid "${APP_GID}" --create-home --shell /usr/sbin/nologin videolingo
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Build from the checked-out source instead of cloning a second, possibly
+# different repository revision during the image build.
+COPY --chown=videolingo:videolingo . .
 
-# Set CUDA-related environment variables
-ENV CUDA_HOME=/usr/local/cuda
-ENV PATH=${CUDA_HOME}/bin:${PATH}
-ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
+# auth.yaml is deliberately excluded from the build context so credentials are
+# not baked into the image. The example keeps the container bootable and can be
+# replaced with a read-only bind mount in deployment.
+RUN cp auth.yaml.example auth.yaml \
+    && mkdir -p .runtime_packages _model_cache users output history \
+    && chown -R videolingo:videolingo \
+        auth.yaml .runtime_packages _model_cache users output history
 
-# Set CUDA architecture list
-ARG TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6+PTX"
-ENV TORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST}
+USER videolingo
 
 EXPOSE 8501
+STOPSIGNAL SIGTERM
 
-CMD ["streamlit", "run", "st.py"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=3 \
+    CMD curl --fail --silent --show-error http://127.0.0.1:8501/_stcore/health || exit 1
+
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["streamlit", "run", "st.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true", "--browser.gatherUsageStats=false"]

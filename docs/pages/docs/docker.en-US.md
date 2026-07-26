@@ -1,66 +1,158 @@
-# Docker Installation
+# Docker / Podman Deployment
 
-VideoLingo provides a Dockerfile that you can use to build the current VideoLingo package. Here are detailed instructions for building and running:
+The image packages the checked-out source tree and uses Python 3.11, PyTorch 2.8, and CUDA 12.8. It includes FFmpeg, the shared libraries required by OpenCV and SoundFile, and multilingual Noto fonts. Models, per-user configuration, and generated files are kept in mounts.
 
-## System Requirements
+## Prerequisites
 
-- CUDA version > 12.4
-- NVIDIA Driver version > 550
+- Docker 24+ or Podman 4.6+
+- An NVIDIA driver that supports CUDA 12.8
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+- At least 20 GB of free disk space is recommended; models are downloaded on first use
 
-## Building and Running the Docker Image or Pulling from DockerHub
-
-```bash
-# Build the Docker image
-docker build -t videolingo .
-
-# Run the Docker container
-docker run -d -p 8501:8501 --gpus all videolingo
-```
-
-### Pulling from DockerHub
-
-You can directly pull the pre-built VideoLingo image from DockerHub:
+Podman accesses NVIDIA GPUs through CDI. Generate the CDI configuration after installing NVIDIA Container Toolkit:
 
 ```bash
-docker pull rqlove/videolingo:latest
+sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+nvidia-ctk cdi list
 ```
 
-After pulling, use the following command to run the container:
+Prepare the login configuration without baking credentials into the image:
 
 ```bash
-docker run -d -p 8501:8501 --gpus all rqlove/videolingo:latest
+cp auth.yaml.example auth.yaml
+# Edit users/passwords and set non-empty cookie.name and cookie.key values.
 ```
 
-Note: 
-- The `-d` parameter runs the container in the background
-- `-p 8501:8501` maps port 8501 of the container to port 8501 of the host
-- `--gpus all` enables support for all available GPUs
-- Make sure to use the full image name `rqlove/videolingo:latest`
+## Build on GitHub
 
-## Models
+`.github/workflows/container-image.yml` builds the image on a GitHub Hosted Runner and publishes it to GitHub Container Registry (GHCR), so no local build is required:
 
-The Whisper model is not included in the image and will be automatically downloaded when the container is first run. If you want to skip the automatic download process, you can download the model weights from [here](https://drive.google.com/file/d/10gPu6qqv92WbmIMo1iJCqQxhbd1ctyVw/view?usp=drive_link) or [Baidu Netdisk](https://pan.baidu.com/s/1hZjqSGVn3z_WSg41-6hCqA?pwd=2kgs) (Passcode: 2kgs).
+- A push to the default `main` branch publishes `latest`, `main`, and `sha-<commit>`
+- A Git tag such as `v1.2.3` publishes `v1.2.3`, `1.2.3`, and `1.2`
+- `workflow_dispatch` starts a manual rebuild from the GitHub Actions page
 
-After downloading, use the following command to run the container, mounting the model file into the container:
+The registry path automatically uses the lowercase repository name:
+
+```text
+ghcr.io/<owner>/<repository>:latest
+```
+
+For this repository, the resulting path is `ghcr.io/lost0427/neovideolingo:latest`.
+
+Pull the image after the workflow completes:
 
 ```bash
-docker run -d -p 8501:8501 --gpus all -v /path/to/your/model:/app/_model_cache rqlove/videolingo:latest
+podman pull ghcr.io/<owner>/<repository>:latest
+# or
+docker pull ghcr.io/<owner>/<repository>:latest
 ```
 
-Please replace `/path/to/your/model` with the actual local path where you downloaded the model file.
+The workflow pushes with the repository-provided `GITHUB_TOKEN` and declares `packages: write`. Package visibility can be changed in GitHub Packages settings after the first publication. The upstream PyTorch image currently provides `linux/amd64`, so the workflow builds that platform only.
 
-## Additional Information
+## Local Build
 
-- Base image: nvidia/cuda:12.4.1-devel-ubuntu20.04
-- Python version: 3.10
-- Pre-installed software: git, curl, sudo, ffmpeg, fonts-noto, etc.
-- PyTorch version: 2.0.0 (CUDA 11.8)
-- Exposed port: 8501 (Streamlit application)
+Choose a container engine from the project root:
 
-For more detailed information, please refer to the Dockerfile.
+```bash
+# Podman. Docker image format preserves the Dockerfile health check metadata.
+podman build --format docker -t videolingo:local .
 
-## Future Plans
+# Docker
+docker build -t videolingo:local .
+```
 
-- Continue to improve the Dockerfile to reduce image size
-- Push the Docker image to Docker Hub
-- Support mounting required models to the host machine using the -v parameter
+The dependency layer is rebuilt only when `requirements.txt` changes. The default base image is `pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime`; it can be overridden at build time:
+
+```bash
+podman build --format docker \
+  --build-arg PYTORCH_IMAGE=pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime \
+  -t videolingo:local .
+```
+
+## Run
+
+Named volumes are recommended for model and user data. Podman uses the CDI device name:
+
+```bash
+podman volume create videolingo-models
+podman volume create videolingo-users
+
+podman run -d \
+  --name videolingo \
+  --restart=unless-stopped \
+  --device nvidia.com/gpu=all \
+  --shm-size=2g \
+  -p 8501:8501 \
+  -v videolingo-models:/app/_model_cache \
+  -v videolingo-users:/app/users \
+  -v "$(pwd)/auth.yaml:/app/auth.yaml:ro" \
+  videolingo:local
+```
+
+Docker uses `--gpus all`:
+
+```bash
+docker volume create videolingo-models
+docker volume create videolingo-users
+
+docker run -d \
+  --name videolingo \
+  --restart unless-stopped \
+  --gpus all \
+  --shm-size=2g \
+  -p 8501:8501 \
+  -v videolingo-models:/app/_model_cache \
+  -v videolingo-users:/app/users \
+  -v "$(pwd)/auth.yaml:/app/auth.yaml:ro" \
+  videolingo:local
+```
+
+Open `http://localhost:8501`. Inspect status and logs with:
+
+```bash
+podman ps --filter name=videolingo
+podman logs -f videolingo
+
+# Docker users can use docker ps / docker logs.
+docker ps --filter name=videolingo
+docker logs -f videolingo
+```
+
+The image includes a health check against `/_stcore/health`.
+
+## Mount Existing Models
+
+When models already exist on the host, replace the two named-volume arguments in the run command with bind mounts:
+
+```bash
+-v /path/to/models:/app/_model_cache
+-v /path/to/users:/app/users
+```
+
+The mounted directories must be writable by the container user. Its default UID/GID is `10001:10001`; match the host user at build time when needed:
+
+```bash
+podman build --format docker \
+  --build-arg APP_UID=$(id -u) \
+  --build-arg APP_GID=$(id -g) \
+  -t videolingo:local .
+```
+
+## Update
+
+Rebuild and replace the container after pulling source updates. Named volumes preserve models, user configuration, and generated files:
+
+```bash
+git pull
+podman build --format docker -t videolingo:local .
+podman rm -f videolingo
+# Run the podman run command above again; Docker users can replace the command name.
+```
+
+## Notes
+
+- The image contains CUDA/cuDNN runtime libraries rather than the compiler toolchain.
+- The build verifies that the interpreter is Python 3.11.
+- Local `auth.yaml`, `users/`, `_model_cache/`, and output directories are excluded by `.dockerignore`.
+- spaCy language models are downloaded into a writable runtime package directory when first used. Recreating the container may download them again; preinstall them or mount `/app/.runtime_packages` to persist them.
+- When using remote Parakeet/QwenASR services, `127.0.0.1` in application configuration refers to the container itself. Use an address reachable from the container.

@@ -1,64 +1,158 @@
-# Docker安装
+# Docker / Podman 部署
 
-VideoLingo 提供了Dockerfile,可自行使用Dockerfile打包目前VideoLingo。以下是打包和运行的详细说明:
+当前镜像直接打包本地工作树中的代码，使用 Python 3.11、PyTorch 2.8 和 CUDA 12.8。镜像中包含 FFmpeg、OpenCV/SoundFile 所需动态库及 Noto 多语言字体；模型、用户配置和处理结果保存在挂载目录中。
 
-## 系统要求
+## 准备工作
 
-- CUDA版本 > 12.4
-- NVIDIA Driver版本> 550
+- Docker 24+ 或 Podman 4.6+
+- NVIDIA 显卡驱动需支持 CUDA 12.8
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+- 建议至少预留 20 GB 磁盘空间；模型会在首次使用时下载
 
-## 构建和运行Docker镜像或者从DokerHub拉取
-
-```bash
-# 构建Docker镜像
-docker build -t videolingo .
-
-# 运行Docker容器
-docker run -d -p 8501:8501 --gpus all videolingo
-```
-
-### 从DockerHub拉取
-
-您可以直接从DockerHub拉取预构建的VideoLingo镜像:
+Podman 使用 CDI 访问 NVIDIA GPU。安装 NVIDIA Container Toolkit 后生成 CDI 配置：
 
 ```bash
-docker pull rqlove/videolingo:latest
+sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+nvidia-ctk cdi list
 ```
 
-拉取完成后,使用以下命令运行容器:
+先准备登录配置，不要把真实凭据构建进镜像：
 
 ```bash
-docker run -d -p 8501:8501 --gpus all rqlove/videolingo:latest
+cp auth.yaml.example auth.yaml
+# 编辑 auth.yaml，设置用户、密码以及非空的 cookie.name/cookie.key
 ```
 
-注意: 
-- `-d` 参数使容器在后台运行
-- `-p 8501:8501` 将容器的8501端口映射到主机的8501端口
-- `--gpus all` 启用所有可用的GPU支持
-- 确保使用完整的镜像名称 `rqlove/videolingo:latest`
+## 在 GitHub 上构建镜像
 
-## 模型
+仓库中的 `.github/workflows/container-image.yml` 会使用 GitHub Hosted Runner 构建镜像并推送到 GitHub Container Registry（GHCR），本地无需执行构建：
 
-whisper 模型不包含在镜像中,会在容器首次运行时自动下载。如果您希望跳过自动下载过程,可以从以下链接下载模型权重:
+- 推送到默认分支 `main`：发布 `latest`、`main` 和 `sha-<commit>` 标签
+- 推送 `v1.2.3` 形式的 Git 标签：同时发布 `v1.2.3`、`1.2.3` 和 `1.2`
+- 在 GitHub Actions 页面执行 `workflow_dispatch`：手动重新构建
 
-- [Google Drive链接](https://drive.google.com/file/d/10gPu6qqv92WbmIMo1iJCqQxhbd1ctyVw/view?usp=drive_link)
-- [百度网盘链接](https://pan.baidu.com/s/1hZjqSGVn3z_WSg41-6hCqA?pwd=2kgs)
+镜像地址会自动使用小写仓库名：
 
-下载后,使用以下命令运行容器,将模型文件挂载到容器中:
+```text
+ghcr.io/<owner>/<repository>:latest
+```
+
+当前仓库对应 `ghcr.io/lost0427/neovideolingo:latest`。
+
+构建完成后直接拉取：
 
 ```bash
-docker run -d -p 8501:8501 --gpus all -v /path/to/your/model:/app/_model_cache rqlove/videolingo:latest
+podman pull ghcr.io/<owner>/<repository>:latest
+# 或
+docker pull ghcr.io/<owner>/<repository>:latest
 ```
 
-请注意将 `/path/to/your/model` 替换为您实际下载模型文件的本地路径。
+工作流使用仓库自带的 `GITHUB_TOKEN` 推送镜像，已经声明 `packages: write` 权限。首次发布后，可在 GitHub 的 Packages 设置中调整镜像可见性。基础 PyTorch 镜像当前只提供 `linux/amd64`，工作流也固定构建该平台。
 
-## 其他说明
+## 本地构建
 
-- 基础镜像: nvidia/cuda:12.4.1-devel-ubuntu20.04
-- Python版本: 3.10
-- 预装软件: git, curl, sudo, ffmpeg, fonts-noto等
-- PyTorch版本: 2.0.0 (CUDA 11.8)
-- 暴露端口: 8501 (Streamlit应用)
+在项目根目录选择一种容器引擎执行：
 
-如需更多详细信息,请参考Dockerfile。
+```bash
+# Podman。Docker 镜像格式会保留 Dockerfile 中的健康检查配置。
+podman build --format docker -t videolingo:local .
 
+# Docker
+docker build -t videolingo:local .
+```
+
+依赖层只会在 `requirements.txt` 变化时重新安装。镜像默认使用 `pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime`，也可以在构建时覆盖基础镜像：
+
+```bash
+podman build --format docker \
+  --build-arg PYTORCH_IMAGE=pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime \
+  -t videolingo:local .
+```
+
+## 运行
+
+推荐用命名卷保存模型与用户数据。Podman 使用 CDI 设备名：
+
+```bash
+podman volume create videolingo-models
+podman volume create videolingo-users
+
+podman run -d \
+  --name videolingo \
+  --restart=unless-stopped \
+  --device nvidia.com/gpu=all \
+  --shm-size=2g \
+  -p 8501:8501 \
+  -v videolingo-models:/app/_model_cache \
+  -v videolingo-users:/app/users \
+  -v "$(pwd)/auth.yaml:/app/auth.yaml:ro" \
+  videolingo:local
+```
+
+Docker 使用 `--gpus all`：
+
+```bash
+docker volume create videolingo-models
+docker volume create videolingo-users
+
+docker run -d \
+  --name videolingo \
+  --restart unless-stopped \
+  --gpus all \
+  --shm-size=2g \
+  -p 8501:8501 \
+  -v videolingo-models:/app/_model_cache \
+  -v videolingo-users:/app/users \
+  -v "$(pwd)/auth.yaml:/app/auth.yaml:ro" \
+  videolingo:local
+```
+
+浏览器访问 `http://localhost:8501`。查看启动状态和日志：
+
+```bash
+podman ps --filter name=videolingo
+podman logs -f videolingo
+
+# Docker 用户使用 docker ps / docker logs
+docker ps --filter name=videolingo
+docker logs -f videolingo
+```
+
+容器内置健康检查，请求地址为 `/_stcore/health`。
+
+## 挂载已有模型
+
+如果模型已位于宿主机目录中，将运行命令里的两个命名卷替换为绑定挂载：
+
+```bash
+-v /path/to/models:/app/_model_cache
+-v /path/to/users:/app/users
+```
+
+挂载目录需要允许容器用户写入。镜像内应用用户默认 UID/GID 为 `10001:10001`，构建时可通过 `APP_UID` 和 `APP_GID` 调整：
+
+```bash
+podman build --format docker \
+  --build-arg APP_UID=$(id -u) \
+  --build-arg APP_GID=$(id -g) \
+  -t videolingo:local .
+```
+
+## 更新
+
+拉取项目更新后重新构建并替换容器。命名卷中的模型、用户配置与处理结果会保留：
+
+```bash
+git pull
+podman build --format docker -t videolingo:local .
+podman rm -f videolingo
+# 再次执行上面的 podman run 命令；Docker 用户替换命令名即可
+```
+
+## 说明
+
+- 镜像只包含运行时 CUDA/cuDNN，不包含编译工具链。
+- 构建过程会校验解释器必须为 Python 3.11。
+- 本地 `auth.yaml`、`users/`、`_model_cache/` 和输出目录均由 `.dockerignore` 排除。
+- spaCy 语言模型会在首次使用相应语言时下载到容器的可写运行目录。重建容器后可能重新下载；若需要完全持久化，可预先安装模型或另外挂载 `/app/.runtime_packages`。
+- 使用远程 Parakeet/QwenASR 服务时，配置中的 `127.0.0.1` 指向容器自身，应填写容器可访问的服务地址。

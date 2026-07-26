@@ -89,12 +89,15 @@ python install.py
 streamlit run st.py
 ```
 
-### Docker
-Alternatively, you can use Docker (requires CUDA 12.4 and NVIDIA Driver version >550), see [Docker docs](/docs/pages/docs/docker.en-US.md):
+### Docker / Podman
+Alternatively, use Docker or Podman. The default image uses Python 3.11, PyTorch 2.8, and CUDA 12.8. See the [container deployment documentation](/docs/pages/docs/docker.en-US.md):
 
 ```bash
-docker build -t videolingo .
-docker run -d -p 8501:8501 --gpus all videolingo
+cp auth.yaml.example auth.yaml
+podman pull ghcr.io/lost0427/neovideolingo:latest
+podman run -d --device nvidia.com/gpu=all -p 8501:8501 \
+  -v "$(pwd)/auth.yaml:/app/auth.yaml:ro" \
+  ghcr.io/lost0427/neovideolingo:latest
 ```
 
 ## API
