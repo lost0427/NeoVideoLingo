@@ -27,9 +27,9 @@ cp auth.yaml.example auth.yaml
 
 仓库中的 `.github/workflows/container-image.yml` 会使用 GitHub Hosted Runner 构建镜像并推送到 GitHub Container Registry（GHCR），本地无需执行构建：
 
-- 推送到默认分支 `main`：发布 `latest`、`main` 和 `sha-<commit>` 标签
-- 推送 `v1.2.3` 形式的 Git 标签：同时发布 `v1.2.3`、`1.2.3` 和 `1.2`
-- 在 GitHub Actions 页面执行 `workflow_dispatch`：手动重新构建
+- 推送 `v1.0.0` 这类 Git 标签时构建并发布：`v1.0.0` 与 `latest`（同一次构建）
+- 推送到 `main` 不会构建
+- 在 GitHub Actions 页面执行 `workflow_dispatch`：可手动触发（无 `v*` 标签时不会生成版本 tag）
 
 镜像地址会自动使用小写仓库名：
 
@@ -156,3 +156,4 @@ podman rm -f videolingo
 - 本地 `auth.yaml`、`users/`、`_model_cache/` 和输出目录均由 `.dockerignore` 排除。
 - spaCy 语言模型会在首次使用相应语言时下载到容器的可写运行目录。重建容器后可能重新下载；若需要完全持久化，可预先安装模型或另外挂载 `/app/.runtime_packages`。
 - 使用远程 Parakeet/QwenASR 服务时，配置中的 `127.0.0.1` 指向容器自身，应填写容器可访问的服务地址。
+

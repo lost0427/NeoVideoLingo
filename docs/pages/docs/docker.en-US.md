@@ -27,9 +27,9 @@ cp auth.yaml.example auth.yaml
 
 `.github/workflows/container-image.yml` builds the image on a GitHub Hosted Runner and publishes it to GitHub Container Registry (GHCR), so no local build is required:
 
-- A push to the default `main` branch publishes `latest`, `main`, and `sha-<commit>`
-- A Git tag such as `v1.2.3` publishes `v1.2.3`, `1.2.3`, and `1.2`
-- `workflow_dispatch` starts a manual rebuild from the GitHub Actions page
+- Pushing a Git tag such as `v1.0.0` builds and publishes `v1.0.0` and `latest` (same build)
+- Pushes to `main` do not build
+- `workflow_dispatch` can start a manual run from the GitHub Actions page (no version tag without a `v*` ref)
 
 The registry path automatically uses the lowercase repository name:
 
@@ -156,3 +156,4 @@ podman rm -f videolingo
 - Local `auth.yaml`, `users/`, `_model_cache/`, and output directories are excluded by `.dockerignore`.
 - spaCy language models are downloaded into a writable runtime package directory when first used. Recreating the container may download them again; preinstall them or mount `/app/.runtime_packages` to persist them.
 - When using remote Parakeet/QwenASR services, `127.0.0.1` in application configuration refers to the container itself. Use an address reachable from the container.
+

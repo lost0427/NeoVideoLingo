@@ -2,8 +2,6 @@ name: Build and publish container image
 
 on:
   push:
-    branches:
-      - main
     tags:
       - "v*"
   workflow_dispatch:
@@ -57,12 +55,8 @@ jobs:
           images: ${{ steps.image.outputs.name }}
           flavor: latest=false
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
-            type=ref,event=branch
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=ref,event=tag
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix=sha-
           labels: |
             org.opencontainers.image.title=NeoVideoLingo
             org.opencontainers.image.description=NeoVideoLingo Streamlit runtime with PyTorch and CUDA
@@ -77,6 +71,8 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
+          provenance: false
+          sbom: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=videolingo-amd64
@@ -89,9 +85,11 @@ jobs:
             echo "### Container image published"
             echo
             echo "- Image: \`${{ steps.image.outputs.name }}\`"
+            echo "- Tags: \`latest\`, \`${{ github.ref_name }}\`"
             echo "- Digest: \`${{ steps.build.outputs.digest }}\`"
             echo
             echo '```bash'
             echo "podman pull ${{ steps.image.outputs.name }}:latest"
+            echo "podman pull ${{ steps.image.outputs.name }}:${{ github.ref_name }}"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
