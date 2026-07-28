@@ -13,7 +13,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
-    STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
     STREAMLIT_SERVER_PORT=8501 \
     STREAMLIT_SERVER_HEADLESS=true \
     XDG_CACHE_HOME=/app/_model_cache \
@@ -80,4 +79,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=3 \
     CMD curl --fail --silent --show-error http://127.0.0.1:8501/_stcore/health || exit 1
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["streamlit", "run", "st.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true", "--browser.gatherUsageStats=false"]
+CMD ["streamlit", "run", "st.py", "--server.port=8501", "--server.headless=true", "--browser.gatherUsageStats=false"]
